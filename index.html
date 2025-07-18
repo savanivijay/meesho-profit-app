@@ -1,66 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meesho Seller Profit Analyzer</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Meesho Profit Analyzer</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans">
 
-  <!-- Header -->
-  <header class="bg-purple-600 text-white py-4 shadow-md">
-    <div class="container mx-auto px-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold">📊 Meesho Seller Profit Analyzer</h1>
-    </div>
-  </header>
+<body class="bg-gray-50 text-gray-800">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold text-center text-purple-600">📊 Meesho Seller Profit Analyzer</h1>
+      <p class="text-center text-sm text-gray-600">Upload your Meesho Payment Excel file to see profit/loss & SKU analysis</p>
+    </header>
 
-  <!-- Main Content -->
-  <main class="container mx-auto px-4 py-8">
-    <!-- Upload Section -->
-    <div class="bg-white rounded-xl shadow p-6 mb-6">
-      <h2 class="text-xl font-semibold mb-4">Upload Payment Excel File</h2>
-      <input type="file" id="excelFile" accept=".xlsx" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
-        file:rounded-full file:border-0
-        file:text-sm file:font-semibold
-        file:bg-purple-100 file:text-purple-700
-        hover:file:bg-purple-200" />
-      <p class="mt-2 text-sm text-gray-400">Only .xlsx format is supported.</p>
-    </div>
+    <section class="mb-6">
+      <label class="block mb-2 font-semibold">📁 Upload Excel File:</label>
+      <input type="file" id="excelFile" accept=".xlsx, .xls" class="border rounded p-2 w-full" />
+    </section>
 
-    <!-- Analytics Section -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="analytics">
-      <div class="bg-white p-4 rounded-xl shadow text-center">
-        <h3 class="text-lg font-semibold text-gray-600">Total Orders</h3>
-        <p class="text-2xl font-bold text-purple-600" id="totalOrders">0</p>
-      </div>
-      <div class="bg-white p-4 rounded-xl shadow text-center">
-        <h3 class="text-lg font-semibold text-gray-600">Total Payout</h3>
-        <p class="text-2xl font-bold text-green-600" id="totalPayout">₹0</p>
-      </div>
-      <div class="bg-white p-4 rounded-xl shadow text-center">
-        <h3 class="text-lg font-semibold text-gray-600">Returns</h3>
-        <p class="text-2xl font-bold text-red-600" id="totalReturns">0</p>
-      </div>
-      <div class="bg-white p-4 rounded-xl shadow text-center">
-        <h3 class="text-lg font-semibold text-gray-600">Return Ratio</h3>
-        <p class="text-2xl font-bold text-yellow-600" id="returnRatio">0%</p>
-      </div>
-    </div>
+    <div id="errorMsg" class="text-red-600 font-semibold text-center mb-4 hidden">❌ No data found. Please upload a valid Meesho Excel file.</div>
 
-    <!-- Table Section -->
-    <div class="bg-white rounded-xl shadow p-4 overflow-auto">
-      <h2 class="text-lg font-semibold mb-4">Uploaded File Data</h2>
-      <table class="min-w-full text-sm text-left text-gray-700 border" id="dataTable">
-        <thead class="bg-gray-100 text-xs uppercase">
-          <tr id="tableHead"></tr>
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="bg-white p-4 rounded shadow">
+        <h2 class="font-bold text-lg mb-2">💰 Overall Summary</h2>
+        <ul class="space-y-1 text-sm">
+          <li><strong>Total Settlement:</strong> ₹<span id="totalSettlement">0</span></li>
+          <li><strong>Total Ad Cost:</strong> ₹<span id="totalAdCost">0</span></li>
+          <li><strong>Product Cost:</strong> ₹<span id="productCost">0</span></li>
+          <li><strong>Other Cost:</strong> ₹<span id="otherCost">0</span></li>
+          <li><strong>Profit:</strong> ₹<span id="totalProfit">0</span></li>
+        </ul>
+      </div>
+
+      <div class="bg-white p-4 rounded shadow">
+        <h2 class="font-bold text-lg mb-2">📦 Order Details</h2>
+        <ul class="space-y-1 text-sm">
+          <li><strong>Total Orders:</strong> <span id="totalOrders">0</span></li>
+          <li><strong>Delivered:</strong> <span id="deliveredOrders">0</span></li>
+          <li><strong>Return:</strong> <span id="returnedOrders">0</span></li>
+          <li><strong>RTO:</strong> <span id="rtoOrders">0</span></li>
+        </ul>
+      </div>
+
+      <div class="bg-white p-4 rounded shadow">
+        <h2 class="font-bold text-lg mb-2">📈 Return Analysis</h2>
+        <ul class="space-y-1 text-sm">
+          <li><strong>Return Ratio %:</strong> <span id="returnRatio">0%</span></li>
+          <li><strong>Return Loss:</strong> ₹<span id="returnLoss">0</span></li>
+          <li><strong>RTO Cost:</strong> ₹<span id="rtoCost">0</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="bg-white p-4 rounded shadow mb-8 overflow-x-auto">
+      <h2 class="font-bold text-lg mb-4">🧾 SKU-Wise Profit Details</h2>
+      <table class="table-auto w-full text-sm border">
+        <thead>
+          <tr class="bg-purple-100">
+            <th class="px-2 py-1 border">SKU</th>
+            <th class="px-2 py-1 border">Sold/Return/RTO</th>
+            <th class="px-2 py-1 border">Settlement</th>
+            <th class="px-2 py-1 border">Return Loss</th>
+            <th class="px-2 py-1 border">Cost Price</th>
+            <th class="px-2 py-1 border">Profit/Loss</th>
+          </tr>
         </thead>
-        <tbody id="tableBody"></tbody>
+        <tbody id="skuTableBody">
+          <!-- Filled by JS -->
+        </tbody>
       </table>
-    </div>
-  </main>
+    </section>
 
-  <!-- Script -->
+    <footer class="text-center text-xs text-gray-400">
+      Built with ❤️ for Meesho Sellers | @2025
+    </footer>
+  </div>
+
   <script src="app.js"></script>
 </body>
+
 </html>
