@@ -2,25 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meesho Dashboard</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="script.js"></script>
-
-  <title>Meesho Seller Profit Analyzer</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
+      font-family: Arial, sans-serif;
       padding: 20px;
-      background-color: #f2f2f2;
-      color: #333;
+      background: #f4f4f4;
     }
-    h1, h2 {
+    h1 {
       text-align: center;
-    }
-    .container {
-      max-width: 1000px;
-      margin: auto;
+      color: #333;
     }
     input[type="file"] {
       display: block;
@@ -29,127 +22,121 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 30px;
-      background: #fff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-top: 20px;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     th, td {
       padding: 10px;
-      text-align: left;
-      border: 1px solid #ddd;
+      border: 1px solid #ccc;
+      text-align: center;
     }
     th {
-      background-color: #ffcc00;
-      color: #000;
+      background-color: #007bff;
+      color: white;
     }
-    .error {
-      color: red;
-      text-align: center;
+    .summary {
+      background: #fff;
+      padding: 20px;
       margin-top: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .summary h3 {
+      margin-top: 0;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>📦 Meesho Seller Profit Analyzer</h1>
-    <input type="file" id="upload" accept=".xlsx,.xls" />
-    <p class="error" id="error"></p>
+  <h1>📊 Meesho Payment Sheet Analytics</h1>
+  <input type="file" id="excelFile" accept=".xlsx, .xls" />
+  <div id="output"></div>
 
-    <h2>🗂 Raw Order Data</h2>
-    <div id="data-table"></div>
-
-    <h2>📊 Profit & Return Analytics</h2>
-    <div id="analytics-table"></div>
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script>
-  document.getElementById("excelFile").addEventListener("change", handleFile, false);
+    document.getElementById("excelFile").addEventListener("change", handleFile, false);
 
-function handleFile(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+    function handleFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: "array" });
-        const sheetName = "Order Payments";
-        const sheet = workbook.Sheets[sheetName];
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: "array" });
+            const sheetName = "Order Payments";
+            const sheet = workbook.Sheets[sheetName];
 
-        if (!sheet) {
-            document.getElementById("output").innerHTML = "❌ 'Order Payments' sheet not found.";
-            return;
-        }
-
-        const json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-
-        if (json.length === 0) {
-            document.getElementById("output").innerHTML = "❌ No data found. Please upload a valid Meesho Excel file.";
-            return;
-        }
-
-        // GROUP BY SKU
-        const grouped = {};
-        let totalPayout = 0;
-        let returnCount = 0;
-
-        json.forEach(row => {
-            const sku = row["Supplier SKU"];
-            const qty = parseInt(row["Quantity"]) || 0;
-            const status = (row["Live Order Status"] || "").toLowerCase();
-            const payout = parseFloat(row["Total Payout"]) || 0;
-
-            if (!sku) return;
-
-            if (!grouped[sku]) {
-                grouped[sku] = { quantity: 0, returns: 0 };
+            if (!sheet) {
+                document.getElementById("output").innerHTML = "❌ 'Order Payments' sheet not found.";
+                return;
             }
 
-            grouped[sku].quantity += qty;
-            if (status.includes("return") || status.includes("rto")) {
-                grouped[sku].returns += 1;
-                returnCount += 1;
+            const json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+            if (json.length === 0) {
+                document.getElementById("output").innerHTML = "❌ No data found. Please upload a valid Meesho Excel file.";
+                return;
             }
 
-            totalPayout += payout;
-        });
+            const grouped = {};
+            let totalPayout = 0;
+            let returnCount = 0;
 
-        // CREATE ANALYTICS TABLE
-        let table = `<table><tr>
-            <th>Supplier SKU</th>
-            <th>Quantity Sold</th>
-            <th>Returns</th>
-            <th>Return Ratio (%)</th>
-        </tr>`;
+            json.forEach(row => {
+                const sku = row["Supplier SKU"];
+                const qty = parseInt(row["Quantity"]) || 0;
+                const status = (row["Live Order Status"] || "").toLowerCase();
+                const payout = parseFloat(row["Total Payout"]) || 0;
 
-        for (let sku in grouped) {
-            const qty = grouped[sku].quantity;
-            const ret = grouped[sku].returns;
-            const ratio = qty === 0 ? 0 : ((ret / qty) * 100).toFixed(2);
-            table += `<tr>
-                <td>${sku}</td>
-                <td>${qty}</td>
-                <td>${ret}</td>
-                <td>${ratio}%</td>
+                if (!sku) return;
+
+                if (!grouped[sku]) {
+                    grouped[sku] = { quantity: 0, returns: 0 };
+                }
+
+                grouped[sku].quantity += qty;
+                if (status.includes("return") || status.includes("rto")) {
+                    grouped[sku].returns += 1;
+                    returnCount += 1;
+                }
+
+                totalPayout += payout;
+            });
+
+            let table = `<table><tr>
+                <th>Supplier SKU</th>
+                <th>Quantity Sold</th>
+                <th>Returns</th>
+                <th>Return Ratio (%)</th>
             </tr>`;
-        }
 
-        table += `</table>`;
+            for (let sku in grouped) {
+                const qty = grouped[sku].quantity;
+                const ret = grouped[sku].returns;
+                const ratio = qty === 0 ? 0 : ((ret / qty) * 100).toFixed(2);
+                table += `<tr>
+                    <td>${sku}</td>
+                    <td>${qty}</td>
+                    <td>${ret}</td>
+                    <td>${ratio}%</td>
+                </tr>`;
+            }
 
-        const summary = `
-            <div class="summary">
-                <h3>📈 Summary</h3>
-                <p><strong>Total Payout:</strong> ₹${totalPayout.toFixed(2)}</p>
-                <p><strong>Total Returns:</strong> ${returnCount}</p>
-            </div>
-        `;
+            table += `</table>`;
 
-        document.getElementById("output").innerHTML = summary + table;
-    };
+            const summary = `
+                <div class="summary">
+                    <h3>📈 Summary</h3>
+                    <p><strong>Total Payout:</strong> ₹${totalPayout.toFixed(2)}</p>
+                    <p><strong>Total Returns:</strong> ${returnCount}</p>
+                </div>
+            `;
 
-    reader.readAsArrayBuffer(file);
-}
-</script>
+            document.getElementById("output").innerHTML = summary + table;
+        };
+
+        reader.readAsArrayBuffer(file);
+    }
+  </script>
 </body>
 </html>
