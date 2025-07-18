@@ -3,192 +3,117 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Meesho Seller Analyzer</title>
+  <title>Meesho Seller Dashboard</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f2f4f8;
-    }
-    header {
-      background: #673ab7;
-      color: white;
+      font-family: sans-serif;
       padding: 20px;
+      background: #f5f7fa;
+      color: #333;
+    }
+    h1 {
       text-align: center;
-    }
-    .container {
-      max-width: 960px;
-      margin: auto;
-      padding: 20px;
-    }
-    .upload-box {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-      margin-bottom: 20px;
+      color: #444;
     }
     input[type="file"] {
-      padding: 10px;
-    }
-    .summary-box {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-    .summary-item {
-      flex: 1;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
+      margin: 20px 0;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      background: white;
-      border-radius: 8px;
-      overflow: hidden;
+      margin-top: 20px;
+      background-color: white;
     }
     th, td {
       padding: 10px;
-      text-align: center;
-      border-bottom: 1px solid #ddd;
+      border: 1px solid #ddd;
+      text-align: left;
     }
     th {
-      background-color: #e1e1e1;
+      background-color: #efefef;
+    }
+    .summary {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+      color: green;
     }
   </style>
 </head>
 <body>
-
-  <header>
-    <h1>📊 Meesho Seller Analyzer</h1>
-    <p>Upload your payment sheet to see profit & return breakdown</p>
-  </header>
-
-  <div class="container">
-    <div class="upload-box">
-      <input type="file" id="fileUpload" accept=".xlsx"/>
-    </div>
-
-    <div class="summary-box" id="summary"></div>
-
-    <div id="output"></div>
-  </div>
-
+  <h1>📊 Meesho Profit Dashboard</h1>
+  <input type="file" id="fileInput" accept=".xlsx, .xls" />
+  <div id="result"></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script>
-    document.getElementById("fileUpload").addEventListener("change", handleFile, false);
+    document.getElementById('fileInput').addEventListener('change', handleFile);
 
     function handleFile(event) {
       const file = event.target.files[0];
       const reader = new FileReader();
 
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
 
-        const sheet = workbook.Sheets["Order Payments"];
-        if (!sheet) {
-          alert("❌ 'Order Payments' sheet not found!");
-          return;
-        }
-
-        const json = XLSX.utils.sheet_to_json(sheet);
-        if (!json.length) {
-          alert("❌ No data found in sheet.");
-          return;
-        }
-
-        const summary = {
-          totalOrders: 0,
-          totalRevenue: 0,
-          totalProfit: 0,
-          totalReturns: 0
-        };
-
-        const skuMap = {};
-
-        json.forEach(row => {
-          const sku = row["Product Id/SKU"] || "Unknown";
-          const name = row["Product Title"] || "No Title";
-          const price = parseFloat(row["Selling Price"]) || 0;
-          const charges = parseFloat(row["Meesho Charges"]) || 0;
-          const status = (row["Order Status"] || "").toLowerCase();
-
-          if (!skuMap[sku]) {
-            skuMap[sku] = { sku, name, orders: 0, revenue: 0, charges: 0, returns: 0 };
-          }
-
-          if (status.includes("delivered")) {
-            skuMap[sku].orders++;
-            skuMap[sku].revenue += price;
-            skuMap[sku].charges += charges;
-          } else if (status.includes("returned") || status.includes("cancelled")) {
-            skuMap[sku].returns++;
-          }
-        });
-
-        // Prepare output
-        let tableHTML = `
-          <table>
-            <thead>
-              <tr>
-                <th>SKU</th>
-                <th>Product Name</th>
-                <th>Orders</th>
-                <th>Revenue</th>
-                <th>Charges</th>
-                <th>Returns</th>
-                <th>Profit</th>
-                <th>Return %</th>
-              </tr>
-            </thead>
-            <tbody>
-        `;
-
-        Object.values(skuMap).forEach(item => {
-          const profit = item.revenue - item.charges;
-          const returnRate = item.returns / (item.orders + item.returns || 1) * 100;
-
-          summary.totalOrders += item.orders;
-          summary.totalRevenue += item.revenue;
-          summary.totalProfit += profit;
-          summary.totalReturns += item.returns;
-
-          tableHTML += `
-            <tr>
-              <td>${item.sku}</td>
-              <td>${item.name}</td>
-              <td>${item.orders}</td>
-              <td>₹${item.revenue.toFixed(2)}</td>
-              <td>₹${item.charges.toFixed(2)}</td>
-              <td>${item.returns}</td>
-              <td>₹${profit.toFixed(2)}</td>
-              <td>${returnRate.toFixed(1)}%</td>
-            </tr>
-          `;
-        });
-
-        tableHTML += "</tbody></table>";
-
-        // Show summary
-        const summaryHTML = `
-          <div class="summary-item"><h3>🧾 Total Orders</h3><p>${summary.totalOrders}</p></div>
-          <div class="summary-item"><h3>💰 Revenue</h3><p>₹${summary.totalRevenue.toFixed(2)}</p></div>
-          <div class="summary-item"><h3>📈 Profit</h3><p>₹${summary.totalProfit.toFixed(2)}</p></div>
-          <div class="summary-item"><h3>📦 Returns</h3><p>${summary.totalReturns}</p></div>
-          <div class="summary-item"><h3>🔁 Return %</h3><p>${(summary.totalReturns / (summary.totalOrders + summary.totalReturns) * 100).toFixed(1)}%</p></div>
-        `;
-
-        document.getElementById("summary").innerHTML = summaryHTML;
-        document.getElementById("output").innerHTML = tableHTML;
+        showData(jsonData);
       };
 
       reader.readAsArrayBuffer(file);
+    }
+
+    function showData(data) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        resultDiv.textContent = '❌ No data found. Please upload a valid Meesho Excel file.';
+        return;
+      }
+
+      // Create table
+      const table = document.createElement('table');
+      const headers = Object.keys(data[0]);
+
+      const thead = document.createElement('tr');
+      headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        thead.appendChild(th);
+      });
+      table.appendChild(thead);
+
+      // Rows
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        headers.forEach(header => {
+          const td = document.createElement('td');
+          td.textContent = row[header];
+          tr.appendChild(td);
+        });
+        table.appendChild(tr);
+      });
+
+      resultDiv.appendChild(table);
+
+      // Calculate total from 'Net Payable' column
+      const profitKey = headers.find(h => h.toLowerCase().includes('net') && h.toLowerCase().includes('payable'));
+      if (profitKey) {
+        let total = 0;
+        data.forEach(row => {
+          const value = parseFloat(row[profitKey]);
+          if (!isNaN(value)) {
+            total += value;
+          }
+        });
+        const summary = document.createElement('div');
+        summary.className = 'summary';
+        summary.textContent = `💰 Total Profit (Net Payable): ₹${total.toFixed(2)}`;
+        resultDiv.appendChild(summary);
+      }
     }
   </script>
 </body>
