@@ -4,247 +4,183 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Meesho Seller Dashboard</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
-      background: #f4f6fa;
+      background-color: #f7f9fc;
       font-family: 'Segoe UI', sans-serif;
     }
     .card {
       border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    .counter-box {
-      text-align: center;
-      padding: 20px;
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
     }
-    .counter-number {
-      font-size: 28px;
+    .counter {
+      font-size: 1.6rem;
       font-weight: bold;
     }
-    .highlight {
-      color: #0d6efd;
-    }
     .upload-area {
-      border: 2px dashed #0d6efd;
-      border-radius: 16px;
+      border: 2px dashed #6c63ff;
       padding: 40px;
       text-align: center;
-      background: #eaf1ff;
+      color: #6c63ff;
       cursor: pointer;
+      border-radius: 16px;
+      transition: 0.3s;
     }
     .upload-area:hover {
-      background: #d6e6ff;
+      background-color: #f0f0ff;
     }
-    .sku-table th {
-      background-color: #0d6efd;
-      color: white;
+    .file-name {
+      margin-top: 10px;
+      font-weight: 500;
+      color: #333;
     }
-    .chart-container {
-      width: 100%;
-      height: 300px;
+    .chart-card {
+      height: 350px;
+    }
+    .input-cost {
+      max-width: 100px;
     }
   </style>
 </head>
 <body>
-  <div class="container my-5">
-    <h2 class="text-center mb-4 text-primary">📊 Meesho Seller Profit Dashboard</h2>
+  <div class="container my-4">
+    <h2 class="text-center mb-4">📊 Meesho Seller Dashboard</h2>
 
-    <!-- Upload -->
-    <div class="upload-area mb-4" onclick="document.getElementById('excelFile').click()">
-      <h5>📁 Click to upload Meesho Excel file</h5>
-      <input type="file" id="excelFile" accept=".xlsx" hidden />
+    <!-- Upload Area -->
+    <div class="upload-area mb-4" id="upload-area">
+      <input type="file" id="excel-file" hidden accept=".xlsx, .xls" />
+      <p>📁 Drag & Drop or Click to Upload Excel File</p>
+      <p class="file-name" id="file-name"></p>
     </div>
 
-    <!-- Counters -->
-    <div class="row text-white">
-      <div class="col-md-3 mb-3">
-        <div class="card bg-primary counter-box">
-          <div>Total Settlement</div>
-          <div class="counter-number" id="settlement">₹0</div>
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-2 col-6">
+        <div class="card text-white bg-success">
+          <div class="card-body text-center">
+            <div class="card-title">Total Settlement</div>
+            <div class="counter" id="total-settlement">₹0</div>
+          </div>
         </div>
       </div>
-      <div class="col-md-3 mb-3">
-        <div class="card bg-success counter-box">
-          <div>Total Profit</div>
-          <div class="counter-number" id="profit">₹0</div>
+      <div class="col-md-2 col-6">
+        <div class="card text-white bg-primary">
+          <div class="card-body text-center">
+            <div class="card-title">Ad Cost</div>
+            <div class="counter" id="ad-cost">₹0</div>
+          </div>
         </div>
       </div>
-      <div class="col-md-3 mb-3">
-        <div class="card bg-danger counter-box">
-          <div>Total Ad Cost</div>
-          <div class="counter-number" id="adCost">₹0</div>
+      <div class="col-md-2 col-6">
+        <div class="card text-white bg-info">
+          <div class="card-body text-center">
+            <div class="card-title">Product Cost</div>
+            <div class="counter" id="product-cost">₹0</div>
+          </div>
         </div>
       </div>
-      <div class="col-md-3 mb-3">
-        <div class="card bg-warning counter-box">
-          <div>Other Costs</div>
-          <div class="counter-number" id="otherCost">₹0</div>
+      <div class="col-md-2 col-6">
+        <div class="card text-white bg-secondary">
+          <div class="card-body text-center">
+            <div class="card-title">Other Cost</div>
+            <div class="counter" id="other-cost">₹0</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 col-6">
+        <div class="card text-white bg-dark">
+          <div class="card-body text-center">
+            <div class="card-title">Profit</div>
+            <div class="counter" id="profit">₹0</div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Order Details -->
-    <div class="row mt-4">
-      <div class="col-md-3 mb-3">
-        <div class="card counter-box">
-          <div>Total Orders</div>
-          <div class="counter-number" id="totalOrders">0</div>
-        </div>
-      </div>
-      <div class="col-md-3 mb-3">
-        <div class="card counter-box">
-          <div>Delivered</div>
-          <div class="counter-number" id="delivered">0</div>
-        </div>
-      </div>
-      <div class="col-md-3 mb-3">
-        <div class="card counter-box">
-          <div>Returns</div>
-          <div class="counter-number" id="returns">0</div>
-        </div>
-      </div>
-      <div class="col-md-3 mb-3">
-        <div class="card counter-box">
-          <div>Return Ratio</div>
-          <div class="counter-number" id="returnRatio">0%</div>
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">📦 Order Details</h5>
+        <div class="row text-center">
+          <div class="col">Total Orders<br><strong id="total-orders">0</strong></div>
+          <div class="col">Delivered<br><strong id="delivered-orders">0</strong></div>
+          <div class="col">Return<br><strong id="return-orders">0</strong></div>
+          <div class="col">RTO<br><strong id="rto-orders">0</strong></div>
+          <div class="col">Return Ratio<br><strong id="return-ratio">0%</strong></div>
         </div>
       </div>
     </div>
 
-    <!-- Chart -->
-    <div class="card my-4 p-4">
-      <h5>📈 Profit Analysis Chart</h5>
-      <div class="chart-container">
-        <canvas id="profitChart"></canvas>
+    <!-- SKU Wise Profit Table -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">📌 SKU Wise Profit Details</h5>
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped">
+            <thead class="table-light">
+              <tr>
+                <th>SKU</th>
+                <th>Sold/Return/RTO</th>
+                <th>Settlement</th>
+                <th>Return Loss</th>
+                <th>Cost Price (₹)</th>
+                <th>Profit/Loss</th>
+              </tr>
+            </thead>
+            <tbody id="sku-table">
+              <tr>
+                <td>EX123</td>
+                <td>10 / 2 / 1</td>
+                <td>₹5000</td>
+                <td>₹200</td>
+                <td><input type="number" class="form-control input-cost" value="350"></td>
+                <td>₹500</td>
+              </tr>
+              <!-- Add dynamically -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- SKU Table -->
-    <div class="card p-4 mb-5">
-      <h5>📦 SKU-Wise Profit Details</h5>
-      <div class="table-responsive">
-        <table class="table sku-table">
-          <thead>
-            <tr>
-              <th>SKU</th>
-              <th>Sold/Return/RTO</th>
-              <th>Settlement</th>
-              <th>Return Loss</th>
-              <th>Cost Price</th>
-              <th>Profit/Loss</th>
-            </tr>
-          </thead>
-          <tbody id="skuTableBody">
-            <tr><td colspan="6" class="text-center">No data available</td></tr>
-          </tbody>
-        </table>
+    <!-- Charts (optional) -->
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card chart-card">
+          <div class="card-body">
+            <h5 class="card-title">📈 SKU Profit Chart</h5>
+            <canvas id="skuChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card chart-card">
+          <div class="card-body">
+            <h5 class="card-title">📊 Order Status Pie</h5>
+            <canvas id="orderChart"></canvas>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const fileInput = document.getElementById('excelFile');
-    fileInput.addEventListener('change', handleFile);
+    // File upload preview
+    const uploadArea = document.getElementById('upload-area');
+    const fileInput = document.getElementById('excel-file');
+    const fileNameDisplay = document.getElementById('file-name');
 
-    function handleFile(event) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(sheet);
-
-        if (jsonData.length === 0) return alert('❌ No data found. Please upload a valid Meesho Excel file.');
-
-        document.getElementById("settlement").textContent = "₹" + getSum(jsonData, "Total Settlement");
-        document.getElementById("adCost").textContent = "₹" + getSum(jsonData, "Total Ad Cost");
-        document.getElementById("otherCost").textContent = "₹" + getSum(jsonData, "Other cost");
-        document.getElementById("profit").textContent = "₹" + getSum(jsonData, "Profit");
-
-        document.getElementById("totalOrders").textContent = jsonData.length;
-        document.getElementById("delivered").textContent = countByStatus(jsonData, "Delivered");
-        const returns = countByStatus(jsonData, "Return");
-        document.getElementById("returns").textContent = returns;
-        document.getElementById("returnRatio").textContent = ((returns / jsonData.length) * 100).toFixed(1) + "%";
-
-        populateTable(jsonData);
-        drawChart(jsonData);
-      };
-      reader.readAsArrayBuffer(file);
-    }
-
-    function getSum(data, field) {
-      return data.reduce((sum, row) => sum + (parseFloat(row[field]) || 0), 0).toFixed(2);
-    }
-
-    function countByStatus(data, status) {
-      return data.filter(row => (row["Live Order Status"] || '').toLowerCase() === status.toLowerCase()).length;
-    }
-
-    function populateTable(data) {
-      const table = document.getElementById("skuTableBody");
-      table.innerHTML = "";
-      const grouped = {};
-
-      data.forEach(row => {
-        const sku = row["Supplier SKU"] || "-";
-        if (!grouped[sku]) grouped[sku] = { sold: 0, return: 0, rto: 0, settlement: 0, returnLoss: 0, cost: 0, profit: 0 };
-
-        const status = (row["Live Order Status"] || '').toLowerCase();
-        if (status === "delivered") grouped[sku].sold++;
-        if (status === "return") grouped[sku].return++;
-        if (status === "rto") grouped[sku].rto++;
-
-        grouped[sku].settlement += parseFloat(row["Total Settlement"] || 0);
-        grouped[sku].returnLoss += parseFloat(row["Return Loss"] || 0);
-        grouped[sku].cost += parseFloat(row["Product cost"] || 0);
-        grouped[sku].profit += parseFloat(row["Profit"] || 0);
-      });
-
-      Object.keys(grouped).forEach(sku => {
-        const d = grouped[sku];
-        const row = `<tr>
-          <td>${sku}</td>
-          <td>${d.sold}/${d.return}/${d.rto}</td>
-          <td>₹${d.settlement.toFixed(2)}</td>
-          <td>₹${d.returnLoss.toFixed(2)}</td>
-          <td>₹${d.cost.toFixed(2)}</td>
-          <td>₹${d.profit.toFixed(2)}</td>
-        </tr>`;
-        table.innerHTML += row;
-      });
-    }
-
-    function drawChart(data) {
-      const ctx = document.getElementById("profitChart").getContext("2d");
-      const labels = [...new Set(data.map(row => row["Supplier SKU"]))];
-      const profits = labels.map(label => {
-        return data
-          .filter(row => row["Supplier SKU"] === label)
-          .reduce((sum, row) => sum + (parseFloat(row["Profit"] || 0)), 0);
-      });
-      new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels,
-          datasets: [{
-            label: "Profit by SKU",
-            backgroundColor: "#0d6efd",
-            data: profits
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false }
-          }
-        }
-      });
-    }
+    uploadArea.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      if (file) fileNameDisplay.textContent = file.name;
+    });
   </script>
 </body>
 </html>
