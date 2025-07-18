@@ -51,46 +51,58 @@
 
   <h2>Meesho Profit Calculator</h2>
 
-  <input type="file" id="upload" />
+  <input type="file" id="excelFile" />
 <div id="output"></div>
 
- <script>
-  document.getElementById('upload').addEventListener('change', function(e) {
+
+<script>
+  document.getElementById('excelFile').addEventListener('change', function (e) {
+    const file = e.target.files[0];
     const reader = new FileReader();
-    reader.onload = function(e) {
+
+    reader.onload = function (e) {
       const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: 'array' });
 
-      // List all sheet names
-      const sheetNames = workbook.SheetNames;
-      console.log("Available Sheets:", sheetNames);
+      // ✅ Always read the "Order Payments" sheet
+      const sheetName = 'Order Payments';
+      const sheet = workbook.Sheets[sheetName];
 
-      const sheet = workbook.Sheets[sheetNames[0]]; // First sheet
-      const json = XLSX.utils.sheet_to_json(sheet);
-      console.log("Sheet Data:", json);
-
-      if (json.length === 0) {
-        document.getElementById('output').innerText = "No data found. Check if your Excel file has rows and headers.";
+      if (!sheet) {
+        document.getElementById('output').innerHTML = "❌ 'Order Payments' sheet not found in the file.";
         return;
       }
 
-      let outputHTML = "<h3>Excel Preview</h3><table border='1'><tr>";
-      const headers = Object.keys(json[0]);
-      headers.forEach(header => outputHTML += `<th>${header}</th>`);
-      outputHTML += "</tr>";
+      const json = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+      if (json.length === 0) {
+        document.getElementById('output').innerHTML = "❌ No data found in 'Order Payments' sheet.";
+        return;
+      }
+
+      // ✅ Show preview of parsed data
+      let html = '<table border="1"><tr>';
+      Object.keys(json[0]).forEach(key => {
+        html += `<th>${key}</th>`;
+      });
+      html += '</tr>';
 
       json.forEach(row => {
-        outputHTML += "<tr>";
-        headers.forEach(header => outputHTML += `<td>${row[header] || ''}</td>`);
-        outputHTML += "</tr>";
+        html += '<tr>';
+        Object.values(row).forEach(value => {
+          html += `<td>${value}</td>`;
+        });
+        html += '</tr>';
       });
+      html += '</table>';
 
-      outputHTML += "</table>";
-      document.getElementById('output').innerHTML = outputHTML;
+      document.getElementById('output').innerHTML = html;
     };
-    reader.readAsArrayBuffer(e.target.files[0]);
+
+    reader.readAsArrayBuffer(file);
   });
 </script>
+
 
 
 
