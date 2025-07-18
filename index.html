@@ -2,203 +2,103 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Meesho Seller Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    .counter {
-      font-variant-numeric: tabular-nums;
-    }
-    .scroll-table {
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    .custom-card {
-      background: white;
-      border-radius: 1rem;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-    }
-  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 
 <body class="bg-gray-100 text-gray-800">
-  <div class="container mx-auto px-4 py-6">
-    <h1 class="text-3xl font-bold text-center mb-8">📊 Meesho Seller Dashboard</h1>
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6 text-center">📦 Meesho Seller Dashboard</h1>
 
-    <!-- File Upload -->
-    <div class="custom-card p-6 mb-6">
-      <label class="block text-lg font-semibold mb-2">Upload Meesho Excel File</label>
-      <input id="fileUpload" type="file" accept=".xlsx" class="border p-2 rounded w-full" />
-      <p class="text-sm mt-2 text-gray-500">Only Meesho Payment Sheet supported.</p>
+    <div class="bg-white p-6 rounded-2xl shadow-md mb-6">
+      <input type="file" id="upload" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+      <div id="sheet-preview" class="mt-4"></div>
+      <div id="data-preview" class="mt-6"></div>
     </div>
 
     <!-- Summary Cards -->
-    <div id="summaryCards" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6"></div>
-
-    <!-- Order Details -->
-    <div class="custom-card p-4 mb-6">
-      <h2 class="text-xl font-bold mb-2">📦 Order Details</h2>
-      <div id="orderDetails" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="summary-cards">
+      <!-- Cards will be inserted here -->
     </div>
 
-    <!-- SKU-Wise Profit Details -->
-    <div class="custom-card p-4 mb-6">
-      <h2 class="text-xl font-bold mb-2">🧾 SKU Wise Profit Details</h2>
-      <div class="scroll-table">
-        <table class="min-w-full table-auto border border-gray-300">
-          <thead class="bg-gray-100">
+    <!-- SKU Wise Profit Details -->
+    <div class="mt-10">
+      <h2 class="text-2xl font-semibold mb-4">📊 SKU Wise Profit Details</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white rounded-xl shadow-md">
+          <thead class="bg-gray-200">
             <tr>
-              <th class="px-2 py-2 border">SKU</th>
-              <th class="px-2 py-2 border">Sold/Return/RTO</th>
-              <th class="px-2 py-2 border">Settlement</th>
-              <th class="px-2 py-2 border">Return Loss</th>
-              <th class="px-2 py-2 border">Cost Price (₹)</th>
-              <th class="px-2 py-2 border">Profit/Loss</th>
+              <th class="px-6 py-3 text-left">SKU</th>
+              <th class="px-6 py-3 text-left">Sold / Return / RTO</th>
+              <th class="px-6 py-3 text-left">Settlement</th>
+              <th class="px-6 py-3 text-left">Return Loss</th>
+              <th class="px-6 py-3 text-left">Cost Price</th>
+              <th class="px-6 py-3 text-left">Profit / Loss</th>
             </tr>
           </thead>
-          <tbody id="skuProfitTable"></tbody>
+          <tbody id="sku-profit-table" class="text-sm">
+            <!-- Rows will be added dynamically -->
+          </tbody>
         </table>
       </div>
     </div>
-
-    <!-- Chart Section -->
-    <div class="custom-card p-4 mb-6">
-      <h2 class="text-xl font-bold mb-2">📈 Profit Distribution</h2>
-      <canvas id="profitChart"></canvas>
-    </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
   <script>
-    const fileUpload = document.getElementById('fileUpload');
+    document.getElementById('upload').addEventListener('change', handleFile, false);
 
-    fileUpload.addEventListener('change', (e) => {
+    function handleFile(e) {
       const file = e.target.files[0];
       if (!file) return;
+
       const reader = new FileReader();
-      reader.onload = (evt) => {
-        const data = new Uint8Array(evt.target.result);
+      reader.onload = function (e) {
+        const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
-        const sheetName = workbook.SheetNames.find(name => name.toLowerCase().includes("order") || name.toLowerCase().includes("payment"));
-        const sheet = workbook.Sheets[sheetName];
-        const json = XLSX.utils.sheet_to_json(sheet);
-        processData(json);
+
+        const sheetNames = workbook.SheetNames;
+        let sheetInfoHTML = `<h3 class='text-lg font-semibold'>✅ Sheets in file:</h3><ul class='list-disc pl-5 mt-2'>`;
+        sheetNames.forEach((name, i) => {
+          sheetInfoHTML += `<li>${i + 1}. ${name}</li>`;
+        });
+        sheetInfoHTML += `</ul>`;
+        document.getElementById('sheet-preview').innerHTML = sheetInfoHTML;
+
+        const firstSheet = workbook.Sheets[sheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+        let startIndex = jsonData.findIndex(row => row.filter(cell => cell).length >= 4);
+
+        if (startIndex === -1) {
+          document.getElementById('data-preview').innerHTML = `<p class='text-red-600'>❌ Could not detect data rows in sheet.</p>`;
+          return;
+        }
+
+        const dataRows = jsonData.slice(startIndex, startIndex + 5);
+        let tableHTML = "<h3 class='text-lg font-semibold mb-2'>🧾 Preview of Data:</h3><table class='table-auto w-full text-left text-sm border rounded-xl'><thead><tr class='bg-blue-100'>";
+        dataRows[0].forEach(cell => {
+          tableHTML += `<th class='px-4 py-2'>${cell}</th>`;
+        });
+        tableHTML += "</tr></thead><tbody>";
+
+        for (let i = 1; i < dataRows.length; i++) {
+          tableHTML += "<tr class='border-t'>";
+          dataRows[i].forEach(cell => {
+            tableHTML += `<td class='px-4 py-2'>${cell || ""}</td>`;
+          });
+          tableHTML += "</tr>";
+        }
+        tableHTML += "</tbody></table>";
+
+        document.getElementById('data-preview').innerHTML = tableHTML;
+
+        // 🔁 Call analytics functions from here with jsonData.slice(startIndex)
       };
       reader.readAsArrayBuffer(file);
-    });
-
-    function processData(rows) {
-      const summary = {
-        totalSettlement: 0,
-        adCost: 0,
-        productCost: 0,
-        otherCost: 0,
-        profit: 0,
-      };
-
-      const orderStats = {
-        total: 0,
-        delivered: 0,
-        return: 0,
-        rto: 0,
-      };
-
-      const skuData = {};
-
-      rows.forEach(row => {
-        const sku = row['Supplier SKU'] || row['supplier sku'];
-        const qty = parseInt(row['Quantity'] || 0);
-        const status = (row['Live Order Status'] || '').toLowerCase();
-        const payout = parseFloat(row['Total Payout'] || 0);
-
-        if (!sku) return;
-        if (!skuData[sku]) {
-          skuData[sku] = { sold: 0, return: 0, rto: 0, payout: 0, returnLoss: 0 };
-        }
-
-        if (status.includes("delivered")) {
-          skuData[sku].sold += qty;
-          orderStats.delivered += qty;
-        } else if (status.includes("return")) {
-          skuData[sku].return += qty;
-          skuData[sku].returnLoss += payout;
-          orderStats.return += qty;
-        } else if (status.includes("rto")) {
-          skuData[sku].rto += qty;
-          orderStats.rto += qty;
-        }
-
-        skuData[sku].payout += payout;
-        summary.totalSettlement += payout;
-        orderStats.total += qty;
-      });
-
-      // Update Summary Cards
-      summaryCards.innerHTML = '';
-      const summaryData = [
-        ['Total Settlement', summary.totalSettlement],
-        ['Ad Cost', summary.adCost],
-        ['Product Cost', summary.productCost],
-        ['Other Cost', summary.otherCost],
-        ['Profit', summary.totalSettlement - summary.adCost - summary.productCost - summary.otherCost],
-      ];
-
-      summaryData.forEach(([label, value]) => {
-        summaryCards.innerHTML += `
-          <div class="bg-white rounded-xl shadow p-4 text-center">
-            <div class="text-sm text-gray-600">${label}</div>
-            <div class="text-xl font-bold counter text-blue-600">₹${value.toFixed(2)}</div>
-          </div>`;
-      });
-
-      // Update Order Details
-      orderDetails.innerHTML = '';
-      [['Total Orders', orderStats.total], ['Delivered', orderStats.delivered], ['Return', orderStats.return], ['RTO', orderStats.rto]].forEach(([label, val]) => {
-        orderDetails.innerHTML += `<div class="bg-gray-50 rounded p-3 text-center"><div class="text-sm">${label}</div><div class="text-lg font-semibold">${val}</div></div>`;
-      });
-
-      // SKU Profit Table
-      const tbody = document.getElementById('skuProfitTable');
-      tbody.innerHTML = '';
-
-      Object.keys(skuData).forEach(sku => {
-        const data = skuData[sku];
-        const costPrice = 100; // You can replace this later with editable field input
-        const totalCost = costPrice * data.sold;
-        const profit = data.payout - totalCost - data.returnLoss;
-
-        tbody.innerHTML += `
-          <tr>
-            <td class="border px-2 py-1">${sku}</td>
-            <td class="border px-2 py-1">${data.sold}/${data.return}/${data.rto}</td>
-            <td class="border px-2 py-1">₹${data.payout.toFixed(2)}</td>
-            <td class="border px-2 py-1">₹${data.returnLoss.toFixed(2)}</td>
-            <td class="border px-2 py-1">₹${costPrice.toFixed(2)}</td>
-            <td class="border px-2 py-1 font-bold ${profit >= 0 ? 'text-green-600' : 'text-red-600'}">₹${profit.toFixed(2)}</td>
-          </tr>`;
-      });
-
-      // Chart
-      const ctx = document.getElementById('profitChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Settlement', 'Ad Cost', 'Product Cost', 'Other Cost', 'Profit'],
-          datasets: [{
-            data: [
-              summary.totalSettlement,
-              summary.adCost,
-              summary.productCost,
-              summary.otherCost,
-              summary.totalSettlement - summary.adCost - summary.productCost - summary.otherCost
-            ],
-            backgroundColor: ['#4ade80', '#facc15', '#60a5fa', '#f87171', '#a78bfa']
-          }]
-        },
-        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
-      });
     }
   </script>
 </body>
