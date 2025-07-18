@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="script.js"></script>
+
   <title>Meesho Seller Profit Analyzer</title>
   <style>
     body {
@@ -61,117 +64,92 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script>
-    document.getElementById('upload').addEventListener('change', handleFile);
+  document.getElementById("excelFile").addEventListener("change", handleFile, false);
 
-    function handleFile(event) {
-      const file = event.target.files[0];
-      const errorEl = document.getElementById('error');
-      errorEl.textContent = "";
+function handleFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
 
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
         const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const sheetName = workbook.SheetNames.find(name =>
-          name.toLowerCase().includes("order payments")
-        );
-
-        if (!sheetName) {
-          errorEl.textContent = "❌ No 'Order Payments' sheet found.";
-          return;
-        }
-
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = "Order Payments";
         const sheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(sheet);
 
-        if (jsonData.length === 0) {
-          errorEl.textContent = "❌ No data found. Please upload a valid Meesho Excel file.";
-          return;
+        if (!sheet) {
+            document.getElementById("output").innerHTML = "❌ 'Order Payments' sheet not found.";
+            return;
         }
 
-        renderTable(jsonData, "data-table");
+        const json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
 
-        const analytics = calculateAnalytics(jsonData);
-        renderTable(analytics, "analytics-table");
-      };
+        if (json.length === 0) {
+            document.getElementById("output").innerHTML = "❌ No data found. Please upload a valid Meesho Excel file.";
+            return;
+        }
 
-      reader.readAsArrayBuffer(file);
-    }
+        // GROUP BY SKU
+        const grouped = {};
+        let totalPayout = 0;
+        let returnCount = 0;
 
-    function renderTable(data, elementId) {
-      const container = document.getElementById(elementId);
-      container.innerHTML = "";
+        json.forEach(row => {
+            const sku = row["Supplier SKU"];
+            const qty = parseInt(row["Quantity"]) || 0;
+            const status = (row["Live Order Status"] || "").toLowerCase();
+            const payout = parseFloat(row["Total Payout"]) || 0;
 
-      if (!data.length) {
-        container.innerHTML = "<p>No data to display.</p>";
-        return;
-      }
+            if (!sku) return;
 
-      const table = document.createElement("table");
-      const thead = document.createElement("thead");
-      const tbody = document.createElement("tbody");
+            if (!grouped[sku]) {
+                grouped[sku] = { quantity: 0, returns: 0 };
+            }
 
-      const headers = Object.keys(data[0]);
-      const headerRow = document.createElement("tr");
-      headers.forEach(header => {
-        const th = document.createElement("th");
-        th.textContent = header;
-        headerRow.appendChild(th);
-      });
-      thead.appendChild(headerRow);
+            grouped[sku].quantity += qty;
+            if (status.includes("return") || status.includes("rto")) {
+                grouped[sku].returns += 1;
+                returnCount += 1;
+            }
 
-      data.forEach(row => {
-        const tr = document.createElement("tr");
-        headers.forEach(header => {
-          const td = document.createElement("td");
-          td.textContent = row[header] || "";
-          tr.appendChild(td);
+            totalPayout += payout;
         });
-        tbody.appendChild(tr);
-      });
 
-      table.appendChild(thead);
-      table.appendChild(tbody);
-      container.appendChild(table);
-    }
+        // CREATE ANALYTICS TABLE
+        let table = `<table><tr>
+            <th>Supplier SKU</th>
+            <th>Quantity Sold</th>
+            <th>Returns</th>
+            <th>Return Ratio (%)</th>
+        </tr>`;
 
-    function calculateAnalytics(data) {
-      const summary = {};
-
-      data.forEach(row => {
-        const sku = row["Supplier SKU"];
-        const qty = parseInt(row["Quantity"]) || 0;
-        const status = row["Live Order Status"]?.toLowerCase() || "";
-        const payout = parseFloat(row["Total Payout"]) || 0;
-
-        if (!sku) return;
-
-        if (!summary[sku]) {
-          summary[sku] = {
-            SKU: sku,
-            Quantity_Sold: 0,
-            Total_Payout: 0,
-            Return_Orders: 0
-          };
+        for (let sku in grouped) {
+            const qty = grouped[sku].quantity;
+            const ret = grouped[sku].returns;
+            const ratio = qty === 0 ? 0 : ((ret / qty) * 100).toFixed(2);
+            table += `<tr>
+                <td>${sku}</td>
+                <td>${qty}</td>
+                <td>${ret}</td>
+                <td>${ratio}%</td>
+            </tr>`;
         }
 
-        summary[sku].Quantity_Sold += qty;
-        summary[sku].Total_Payout += payout;
+        table += `</table>`;
 
-        if (status.includes("return")) {
-          summary[sku].Return_Orders += 1;
-        }
-      });
+        const summary = `
+            <div class="summary">
+                <h3>📈 Summary</h3>
+                <p><strong>Total Payout:</strong> ₹${totalPayout.toFixed(2)}</p>
+                <p><strong>Total Returns:</strong> ${returnCount}</p>
+            </div>
+        `;
 
-      return Object.values(summary).map(entry => ({
-        ...entry,
-        Return_Ratio: entry.Quantity_Sold > 0
-          ? ((entry.Return_Orders / entry.Quantity_Sold) * 100).toFixed(2) + "%"
-          : "0%"
-      }));
-    }
-  </script>
+        document.getElementById("output").innerHTML = summary + table;
+    };
+
+    reader.readAsArrayBuffer(file);
+}
+</script>
 </body>
 </html>
