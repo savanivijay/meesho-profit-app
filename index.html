@@ -54,59 +54,43 @@
   <input type="file" id="upload" />
 <div id="output"></div>
 
-  <script>
+ <script>
   document.getElementById('upload').addEventListener('change', function(e) {
     const reader = new FileReader();
     reader.onload = function(e) {
       const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, {type: 'array'});
-      
+      const workbook = XLSX.read(data, { type: 'array' });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const json = XLSX.utils.sheet_to_json(sheet);
-      const json = XLSX.utils.sheet_to_json(sheet);
-console.log(json); // ← This will show you what columns are available
 
+      console.log("Excel Data:", json); // See what data you're getting
 
-      let totalRevenue = 0;
-      let totalCost = 0;
-      let skuStats = {};
+      if (json.length === 0) {
+        document.getElementById('output').innerText = "No data found.";
+        return;
+      }
 
+      let outputHTML = "<h3>Raw Excel Data</h3><table border='1'><tr>";
+
+      // Add table headers
+      const headers = Object.keys(json[0]);
+      headers.forEach(header => outputHTML += `<th>${header}</th>`);
+      outputHTML += "</tr>";
+
+      // Add table rows
       json.forEach(row => {
-        const sku = row['SKU Code'] || row['sku_code'];
-        const payout = parseFloat(row['Seller Payout'] || 0);
-        const commission = parseFloat(row['Commission'] || 0);
-        const ads = parseFloat(row['Ads Cost'] || 0);
-        const ref = parseFloat(row['Referral Fee'] || 0);
-        const returnStatus = (row['Return Status'] || '').toLowerCase();
-
-        const profit = payout - commission - ads - ref;
-
-        if (!skuStats[sku]) {
-          skuStats[sku] = { profit: 0, total: 0, returns: 0 };
-        }
-
-        skuStats[sku].profit += profit;
-        skuStats[sku].total += 1;
-        if (returnStatus.includes('return')) skuStats[sku].returns += 1;
-
-        totalRevenue += payout;
-        totalCost += commission + ads + ref;
+        outputHTML += "<tr>";
+        headers.forEach(header => outputHTML += `<td>${row[header] || ''}</td>`);
+        outputHTML += "</tr>";
       });
 
-      let result = `<h3>Total Profit: ₹${(totalRevenue - totalCost).toFixed(2)}</h3>`;
-      result += "<table border='1'><tr><th>SKU</th><th>Profit</th><th>Orders</th><th>Return %</th></tr>";
-      Object.entries(skuStats).forEach(([sku, stat]) => {
-        const returnRate = ((stat.returns / stat.total) * 100).toFixed(2);
-        result += `<tr><td>${sku}</td><td>₹${stat.profit.toFixed(2)}</td><td>${stat.total}</td><td>${returnRate}%</td></tr>`;
-      });
-      result += "</table>";
-
-      document.getElementById('output').innerHTML = result;
+      outputHTML += "</table>";
+      document.getElementById('output').innerHTML = outputHTML;
     };
-
     reader.readAsArrayBuffer(e.target.files[0]);
   });
 </script>
+
 
 
 </body>
