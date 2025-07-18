@@ -3,10 +3,64 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tailwind Test</title>
+  <title>Meesho Seller Profit Analyzer</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-  <h1 class="text-4xl font-bold text-blue-600">Tailwind is working! 🎉</h1>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+  <!-- Header -->
+  <header class="bg-purple-600 text-white py-4 shadow-md">
+    <div class="container mx-auto px-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold">📊 Meesho Seller Profit Analyzer</h1>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8">
+    <!-- Upload Section -->
+    <div class="bg-white rounded-xl shadow p-6 mb-6">
+      <h2 class="text-xl font-semibold mb-4">Upload Payment Excel File</h2>
+      <input type="file" id="excelFile" accept=".xlsx" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
+        file:rounded-full file:border-0
+        file:text-sm file:font-semibold
+        file:bg-purple-100 file:text-purple-700
+        hover:file:bg-purple-200" />
+      <p class="mt-2 text-sm text-gray-400">Only .xlsx format is supported.</p>
+    </div>
+
+    <!-- Analytics Section -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" id="analytics">
+      <div class="bg-white p-4 rounded-xl shadow text-center">
+        <h3 class="text-lg font-semibold text-gray-600">Total Orders</h3>
+        <p class="text-2xl font-bold text-purple-600" id="totalOrders">0</p>
+      </div>
+      <div class="bg-white p-4 rounded-xl shadow text-center">
+        <h3 class="text-lg font-semibold text-gray-600">Total Payout</h3>
+        <p class="text-2xl font-bold text-green-600" id="totalPayout">₹0</p>
+      </div>
+      <div class="bg-white p-4 rounded-xl shadow text-center">
+        <h3 class="text-lg font-semibold text-gray-600">Returns</h3>
+        <p class="text-2xl font-bold text-red-600" id="totalReturns">0</p>
+      </div>
+      <div class="bg-white p-4 rounded-xl shadow text-center">
+        <h3 class="text-lg font-semibold text-gray-600">Return Ratio</h3>
+        <p class="text-2xl font-bold text-yellow-600" id="returnRatio">0%</p>
+      </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="bg-white rounded-xl shadow p-4 overflow-auto">
+      <h2 class="text-lg font-semibold mb-4">Uploaded File Data</h2>
+      <table class="min-w-full text-sm text-left text-gray-700 border" id="dataTable">
+        <thead class="bg-gray-100 text-xs uppercase">
+          <tr id="tableHead"></tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Script -->
+  <script src="app.js"></script>
 </body>
 </html>
