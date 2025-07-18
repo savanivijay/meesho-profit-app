@@ -1,141 +1,59 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meesho Profit Dashboard</title>
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #4a4a4a;
-    }
-    input[type="file"] {
-      margin-bottom: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    table th, table td {
-      padding: 8px;
-      border: 1px solid #ccc;
-      text-align: left;
-    }
-    .summary {
-      margin-top: 20px;
-      background: #f0f8ff;
-      padding: 15px;
-      border-left: 5px solid #007acc;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>📊 Meesho Seller Profit Dashboard</h1>
-    <input type="file" id="upload" accept=".xlsx, .xls" />
-    <div class="summary" id="analytics"></div>
-    <div id="output"></div>
-  </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meesho Seller Profit Dashboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>📊 Meesho Seller Dashboard</h1>
+        <p>Analyze your profits, returns & SKU-wise performance</p>
+      </header>
 
-  <script>
-    document.getElementById('upload').addEventListener('change', handleFile, false);
+      <section class="upload-section">
+        <label for="fileInput" class="upload-box">
+          <input type="file" id="fileInput" accept=".xlsx, .xls" />
+          <span>📁 Upload Meesho Payment Excel File</span>
+        </label>
+        <p class="note">* File will not be stored. Analysis happens locally.</p>
+      </section>
 
-    function handleFile(e) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
+      <section class="analytics-cards">
+        <div class="card">
+          <h3>Total Payout</h3>
+          <p id="totalPayout">₹0</p>
+        </div>
+        <div class="card">
+          <h3>Total Quantity Sold</h3>
+          <p id="quantitySold">0</p>
+        </div>
+        <div class="card">
+          <h3>Return Orders</h3>
+          <p id="returnOrders">0</p>
+        </div>
+        <div class="card">
+          <h3>Return Ratio</h3>
+          <p id="returnRatio">0%</p>
+        </div>
+      </section>
 
-      reader.onload = function (e) {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const sheetName = workbook.SheetNames.find(name => name.toLowerCase().includes("order"));
+      <section class="data-table">
+        <h2>📋 Order Payments Data</h2>
+        <div id="tableContainer">Please upload a file to view data.</div>
+      </section>
 
-        if (!sheetName) {
-          document.getElementById('output').innerHTML = "❌ No data found. Please upload a valid Meesho Excel file.";
-          return;
-        }
+      <footer>
+        <p>Made with ❤️ for Meesho Sellers | @vrsavani</p>
+      </footer>
+    </div>
 
-        const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
-        if (!jsonData.length) {
-          document.getElementById('output').innerHTML = "❌ No data found in the sheet.";
-          return;
-        }
-
-        renderTable(jsonData);
-        renderAnalytics(jsonData);
-      };
-
-      reader.readAsArrayBuffer(file);
-    }
-
-    function renderTable(data) {
-      let html = '<table><thead><tr>';
-      Object.keys(data[0]).forEach(key => {
-        html += `<th>${key}</th>`;
-      });
-      html += '</tr></thead><tbody>';
-
-      data.forEach(row => {
-        html += '<tr>';
-        Object.values(row).forEach(cell => {
-          html += `<td>${cell}</td>`;
-        });
-        html += '</tr>';
-      });
-
-      html += '</tbody></table>';
-      document.getElementById('output').innerHTML = html;
-    }
-
-    function renderAnalytics(data) {
-      let skuStats = {};
-      let totalPayout = 0;
-      let returnCount = 0;
-      let totalOrders = 0;
-
-      data.forEach(row => {
-        const sku = row["Supplier SKU"] || row["supplier sku"] || row["SKU"] || "Unknown";
-        const qty = parseInt(row["Quantity"] || row["quantity"] || row["I2"] || 0);
-        const payout = parseFloat(row["Total Payout"] || row["total payout"] || row["L2"] || 0);
-        const status = row["Live Order Status"] || row["live order status"] || row["f2"] || "";
-
-        totalPayout += payout;
-        totalOrders++;
-        if (status.toLowerCase().includes("return")) returnCount++;
-
-        if (!skuStats[sku]) skuStats[sku] = { qty: 0 };
-        skuStats[sku].qty += isNaN(qty) ? 0 : qty;
-      });
-
-      let analyticsHtml = `<h3>📈 Analytics Overview</h3>`;
-      analyticsHtml += `<p><strong>Total Payout:</strong> ₹${totalPayout.toFixed(2)}</p>`;
-      analyticsHtml += `<p><strong>Total Orders:</strong> ${totalOrders}</p>`;
-      analyticsHtml += `<p><strong>Return Orders:</strong> ${returnCount}</p>`;
-      analyticsHtml += `<p><strong>Return Ratio:</strong> ${(returnCount / totalOrders * 100).toFixed(2)}%</p>`;
-      analyticsHtml += `<h4>📦 Quantity Sold per SKU:</h4><ul>`;
-      for (const sku in skuStats) {
-        analyticsHtml += `<li><strong>${sku}:</strong> ${skuStats[sku].qty} pcs</li>`;
-      }
-      analyticsHtml += `</ul>`;
-
-      document.getElementById('analytics').innerHTML = analyticsHtml;
-    }
-  </script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
