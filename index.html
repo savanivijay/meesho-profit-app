@@ -1,84 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meesho Profit Analyzer</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <title>Meesho Seller Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card {
+      @apply bg-white shadow-md rounded-2xl p-6 transition transform hover:scale-105 duration-300;
+    }
+  </style>
 </head>
+<body class="bg-gray-100 min-h-screen p-4">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-3xl font-bold text-gray-800">📊 Meesho Seller Dashboard</h1>
+      <p class="text-gray-500">Upload your payment sheet and analyze your profits</p>
+    </div>
 
-<body class="bg-gray-50 text-gray-800">
-  <div class="max-w-6xl mx-auto px-4 py-6">
-    <header class="mb-8">
-      <h1 class="text-3xl font-bold text-center text-purple-600">📊 Meesho Seller Profit Analyzer</h1>
-      <p class="text-center text-sm text-gray-600">Upload your Meesho Payment Excel file to see profit/loss & SKU analysis</p>
-    </header>
+    <!-- File Upload -->
+    <div class="card mb-6">
+      <label class="block text-sm font-medium text-gray-700">Upload Excel File</label>
+      <input type="file" id="fileInput" accept=".xlsx,.xls" class="mt-2 border border-gray-300 rounded px-4 py-2" />
+      <div id="filePreview" class="mt-4 text-sm text-gray-500"></div>
+    </div>
 
-    <section class="mb-6">
-      <label class="block mb-2 font-semibold">📁 Upload Excel File:</label>
-      <input type="file" id="excelFile" accept=".xlsx, .xls" class="border rounded p-2 w-full" />
-    </section>
-
-    <div id="errorMsg" class="text-red-600 font-semibold text-center mb-4 hidden">❌ No data found. Please upload a valid Meesho Excel file.</div>
-
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      <div class="bg-white p-4 rounded shadow">
-        <h2 class="font-bold text-lg mb-2">💰 Overall Summary</h2>
-        <ul class="space-y-1 text-sm">
-          <li><strong>Total Settlement:</strong> ₹<span id="totalSettlement">0</span></li>
-          <li><strong>Total Ad Cost:</strong> ₹<span id="totalAdCost">0</span></li>
-          <li><strong>Product Cost:</strong> ₹<span id="productCost">0</span></li>
-          <li><strong>Other Cost:</strong> ₹<span id="otherCost">0</span></li>
-          <li><strong>Profit:</strong> ₹<span id="totalProfit">0</span></li>
-        </ul>
+    <!-- Summary Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="card">
+        <h2 class="text-lg font-semibold">Total Settlement</h2>
+        <p id="totalSettlement" class="text-2xl font-bold text-green-600">₹0</p>
       </div>
-
-      <div class="bg-white p-4 rounded shadow">
-        <h2 class="font-bold text-lg mb-2">📦 Order Details</h2>
-        <ul class="space-y-1 text-sm">
-          <li><strong>Total Orders:</strong> <span id="totalOrders">0</span></li>
-          <li><strong>Delivered:</strong> <span id="deliveredOrders">0</span></li>
-          <li><strong>Return:</strong> <span id="returnedOrders">0</span></li>
-          <li><strong>RTO:</strong> <span id="rtoOrders">0</span></li>
-        </ul>
+      <div class="card">
+        <h2 class="text-lg font-semibold">Total Ad Cost</h2>
+        <p id="adCost" class="text-2xl font-bold text-red-500">₹0</p>
       </div>
-
-      <div class="bg-white p-4 rounded shadow">
-        <h2 class="font-bold text-lg mb-2">📈 Return Analysis</h2>
-        <ul class="space-y-1 text-sm">
-          <li><strong>Return Ratio %:</strong> <span id="returnRatio">0%</span></li>
-          <li><strong>Return Loss:</strong> ₹<span id="returnLoss">0</span></li>
-          <li><strong>RTO Cost:</strong> ₹<span id="rtoCost">0</span></li>
-        </ul>
+      <div class="card">
+        <h2 class="text-lg font-semibold">Product Cost</h2>
+        <p id="productCost" class="text-2xl font-bold text-yellow-600">₹0</p>
       </div>
-    </section>
+      <div class="card">
+        <h2 class="text-lg font-semibold">Profit</h2>
+        <p id="profit" class="text-2xl font-bold text-blue-600">₹0</p>
+      </div>
+    </div>
 
-    <section class="bg-white p-4 rounded shadow mb-8 overflow-x-auto">
-      <h2 class="font-bold text-lg mb-4">🧾 SKU-Wise Profit Details</h2>
-      <table class="table-auto w-full text-sm border">
-        <thead>
-          <tr class="bg-purple-100">
-            <th class="px-2 py-1 border">SKU</th>
-            <th class="px-2 py-1 border">Sold/Return/RTO</th>
-            <th class="px-2 py-1 border">Settlement</th>
-            <th class="px-2 py-1 border">Return Loss</th>
-            <th class="px-2 py-1 border">Cost Price</th>
-            <th class="px-2 py-1 border">Profit/Loss</th>
-          </tr>
-        </thead>
-        <tbody id="skuTableBody">
-          <!-- Filled by JS -->
-        </tbody>
-      </table>
-    </section>
+    <!-- Order Details -->
+    <div class="card mb-6">
+      <h2 class="text-xl font-semibold mb-4">📦 Order Summary</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div><span class="font-medium">Total Orders:</span> <span id="totalOrders">0</span></div>
+        <div><span class="font-medium">Delivered:</span> <span id="delivered">0</span></div>
+        <div><span class="font-medium">Return:</span> <span id="return">0</span></div>
+        <div><span class="font-medium">RTO:</span> <span id="rto">0</span></div>
+      </div>
+    </div>
 
-    <footer class="text-center text-xs text-gray-400">
-      Built with ❤️ for Meesho Sellers | @2025
-    </footer>
+    <!-- SKU Wise Profit Details -->
+    <div class="card mb-6">
+      <h2 class="text-xl font-semibold mb-4">📌 SKU Wise Profit Details</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full border text-sm text-left">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="p-2 border">SKU</th>
+              <th class="p-2 border">Sold/Return/RTO</th>
+              <th class="p-2 border">Settlement</th>
+              <th class="p-2 border">Return Loss</th>
+              <th class="p-2 border">Cost Price</th>
+              <th class="p-2 border">Profit/Loss</th>
+            </tr>
+          </thead>
+          <tbody id="skuTable">
+            <!-- JS inserts rows here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="card mb-6">
+      <h2 class="text-xl font-semibold mb-4">📈 Profit & Cost Breakdown</h2>
+      <canvas id="profitChart" height="100"></canvas>
+    </div>
+
+    <!-- File Data Table -->
+    <div class="card">
+      <h2 class="text-xl font-semibold mb-4">📋 Raw Excel Data Preview</h2>
+      <div class="overflow-auto max-h-96">
+        <table class="min-w-full border text-sm text-left">
+          <thead class="bg-gray-100" id="excelHeaders"></thead>
+          <tbody id="excelTableBody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
-  <script src="app.js"></script>
-</body>
+  <script>
+    // Placeholder JavaScript — connect this with your data parsing logic.
+    const fileInput = document.getElementById("fileInput");
+    fileInput.addEventListener("change", (e) => {
+      const fileName = e.target.files[0]?.name || "No file selected";
+      document.getElementById("filePreview").textContent = `📁 ${fileName}`;
+    });
 
+    const ctx = document.getElementById("profitChart").getContext("2d");
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Settlement", "Ad Cost", "Product Cost", "Profit"],
+        datasets: [{
+          label: "Amount (₹)",
+          data: [20000, 3000, 8000, 9000],
+          backgroundColor: ["#10B981", "#EF4444", "#F59E0B", "#3B82F6"],
+        }],
+      },
+    });
+  </script>
+</body>
 </html>
