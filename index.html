@@ -63,6 +63,9 @@
       
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const json = XLSX.utils.sheet_to_json(sheet);
+      const json = XLSX.utils.sheet_to_json(sheet);
+console.log(json); // ← This will show you what columns are available
+
 
       let totalRevenue = 0;
       let totalCost = 0;
