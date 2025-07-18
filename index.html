@@ -1,121 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Meesho Seller Dashboard</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      background: #f5f7fa;
-      color: #333;
-    }
-    h1 {
-      text-align: center;
-      color: #444;
-    }
-    input[type="file"] {
-      margin: 20px 0;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      background-color: white;
-    }
-    th, td {
-      padding: 10px;
-      border: 1px solid #ddd;
-      text-align: left;
-    }
-    th {
-      background-color: #efefef;
-    }
-    .summary {
-      margin-top: 20px;
-      font-weight: bold;
-      font-size: 18px;
-      color: green;
-    }
-  </style>
-</head>
-<body>
-  <h1>📊 Meesho Profit Dashboard</h1>
-  <input type="file" id="fileInput" accept=".xlsx, .xls" />
-  <div id="result"></div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script>
-    document.getElementById('fileInput').addEventListener('change', handleFile);
-
-    function handleFile(event) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-
-      reader.onload = function (e) {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
-console.log(jsonData); // 👉 This will show the extracted data in browser console
-
-        showData(jsonData);
-      };
-
-      reader.readAsArrayBuffer(file);
-    }
-
-    function showData(data) {
-      const resultDiv = document.getElementById('result');
-      resultDiv.innerHTML = '';
-
-      if (!data || data.length === 0) {
-        resultDiv.textContent = '❌ No data found. Please upload a valid Meesho Excel file.';
-        return;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meesho Profit Dashboard</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f6f8;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        max-width: 900px;
+        width: 100%;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+      input[type="file"] {
+        margin-bottom: 20px;
+      }
+      .result-box {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+      .box {
+        background: #eef1f4;
+        padding: 20px;
+        border-radius: 12px;
+        flex: 1 1 250px;
+        text-align: center;
+      }
+      .box h3 {
+        margin: 0;
+        font-size: 18px;
+        color: #555;
+      }
+      .box p {
+        font-size: 24px;
+        font-weight: bold;
+        color: #111;
+        margin: 10px 0 0;
+      }
+      .error {
+        color: red;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📊 Meesho Profit Dashboard</h1>
+      <input type="file" id="upload" accept=".xlsx" />
+      <div class="result-box" id="dashboard" style="display: none">
+        <div class="box">
+          <h3>Total Delivered Orders</h3>
+          <p id="delivered">0</p>
+        </div>
+        <div class="box">
+          <h3>Total Return Orders</h3>
+          <p id="returns">0</p>
+        </div>
+        <div class="box">
+          <h3>Total Earnings</h3>
+          <p id="earnings">₹0</p>
+        </div>
+        <div class="box">
+          <h3>Total Deductions</h3>
+          <p id="deductions">₹0</p>
+        </div>
+        <div class="box">
+          <h3>Net Profit</h3>
+          <p id="profit">₹0</p>
+        </div>
+      </div>
+      <p class="error" id="error"></p>
+    </div>
 
-      // Create table
-      const table = document.createElement('table');
-      const headers = Object.keys(data[0]);
+    <script>
+      document.getElementById('upload').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
 
-      const thead = document.createElement('tr');
-      headers.forEach(header => {
-        const th = document.createElement('th');
-        th.textContent = header;
-        thead.appendChild(th);
-      });
-      table.appendChild(thead);
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          const data = new Uint8Array(event.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
 
-      // Rows
-      data.forEach(row => {
-        const tr = document.createElement('tr');
-        headers.forEach(header => {
-          const td = document.createElement('td');
-          td.textContent = row[header];
-          tr.appendChild(td);
-        });
-        table.appendChild(tr);
-      });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const jsonData = XLSX.utils.sheet_to_json(sheet, { defval: '' });
 
-      resultDiv.appendChild(table);
-
-      // Calculate total from 'Net Payable' column
-      const profitKey = headers.find(h => h.toLowerCase().includes('net') && h.toLowerCase().includes('payable'));
-      if (profitKey) {
-        let total = 0;
-        data.forEach(row => {
-          const value = parseFloat(row[profitKey]);
-          if (!isNaN(value)) {
-            total += value;
+          if (jsonData.length === 0) {
+            showError('❌ No data found. Please upload a valid Meesho Excel file.');
+            return;
           }
-        });
-        const summary = document.createElement('div');
-        summary.className = 'summary';
-        summary.textContent = `💰 Total Profit (Net Payable): ₹${total.toFixed(2)}`;
-        resultDiv.appendChild(summary);
+
+          let delivered = 0;
+          let returns = 0;
+          let earnings = 0;
+          let deductions = 0;
+
+          jsonData.forEach((row) => {
+            const status = row['Order Status'] || row['Status'] || row['Order status'];
+            const amount = parseFloat(row['Settlement Amount'] || row['Total Amount'] || row['Amount'] || 0);
+
+            if (status?.toLowerCase().includes('delivered')) {
+              delivered++;
+              earnings += amount;
+            } else if (status?.toLowerCase().includes('returned')) {
+              returns++;
+              deductions += amount;
+            }
+          });
+
+          const profit = earnings - deductions;
+          document.getElementById('delivered').textContent = delivered;
+          document.getElementById('returns').textContent = returns;
+          document.getElementById('earnings').textContent = '₹' + earnings.toFixed(2);
+          document.getElementById('deductions').textContent = '₹' + deductions.toFixed(2);
+          document.getElementById('profit').textContent = '₹' + profit.toFixed(2);
+          document.getElementById('dashboard').style.display = 'flex';
+          document.getElementById('error').textContent = '';
+        };
+        reader.readAsArrayBuffer(file);
+      });
+
+      function showError(message) {
+        document.getElementById('dashboard').style.display = 'none';
+        document.getElementById('error').textContent = message;
       }
-    }
-  </script>
-</body>
+    </script>
+  </body>
 </html>
