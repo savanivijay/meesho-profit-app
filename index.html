@@ -6,26 +6,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Meesho Seller Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 
 <body class="bg-gray-100 text-gray-800">
   <div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-6 text-center">📦 Meesho Seller Dashboard</h1>
 
+    <!-- File Upload Section -->
     <div class="bg-white p-6 rounded-2xl shadow-md mb-6">
-      <input type="file" id="upload" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
-      <div id="sheet-preview" class="mt-4"></div>
-      <div id="data-preview" class="mt-6"></div>
+      <input type="file" disabled
+        class="block w-full text-sm text-gray-500 cursor-not-allowed file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+      <div id="sheet-preview" class="mt-4 text-gray-400 italic">Sheet preview will appear here (JS required)</div>
+      <div id="data-preview" class="mt-6 text-gray-400 italic">Data preview will appear here (JS required)</div>
     </div>
 
-    <!-- Summary Cards -->
+    <!-- Summary Cards (Static Placeholders) -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="summary-cards">
-      <!-- Cards will be inserted here -->
+      <div class="bg-white rounded-xl p-4 shadow text-center">
+        <h3 class="font-semibold text-lg">Total Settlement</h3>
+        <p class="text-xl text-blue-600 mt-2">₹0</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 shadow text-center">
+        <h3 class="font-semibold text-lg">Total Ad Cost</h3>
+        <p class="text-xl text-blue-600 mt-2">₹0</p>
+      </div>
+      <div class="bg-white rounded-xl p-4 shadow text-center">
+        <h3 class="font-semibold text-lg">Product Cost</h3>
+        <p class="text-xl text-blue-600 mt-2">₹0</p>
+      </div>
     </div>
 
-    <!-- SKU Wise Profit Details -->
+    <!-- SKU Wise Profit Table (Static Example) -->
     <div class="mt-10">
       <h2 class="text-2xl font-semibold mb-4">📊 SKU Wise Profit Details</h2>
       <div class="overflow-x-auto">
@@ -41,66 +52,27 @@
             </tr>
           </thead>
           <tbody id="sku-profit-table" class="text-sm">
-            <!-- Rows will be added dynamically -->
+            <tr>
+              <td class="px-6 py-3">SKU001</td>
+              <td class="px-6 py-3">50 / 5 / 2</td>
+              <td class="px-6 py-3">₹2,500</td>
+              <td class="px-6 py-3">₹150</td>
+              <td class="px-6 py-3">₹1,000</td>
+              <td class="px-6 py-3 text-green-600">₹1,350</td>
+            </tr>
+            <tr class="bg-gray-50">
+              <td class="px-6 py-3">SKU002</td>
+              <td class="px-6 py-3">30 / 3 / 1</td>
+              <td class="px-6 py-3">₹1,800</td>
+              <td class="px-6 py-3">₹90</td>
+              <td class="px-6 py-3">₹800</td>
+              <td class="px-6 py-3 text-green-600">₹910</td>
+            </tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
-
-  <script>
-    document.getElementById('upload').addEventListener('change', handleFile, false);
-
-    function handleFile(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-
-        const sheetNames = workbook.SheetNames;
-        let sheetInfoHTML = `<h3 class='text-lg font-semibold'>✅ Sheets in file:</h3><ul class='list-disc pl-5 mt-2'>`;
-        sheetNames.forEach((name, i) => {
-          sheetInfoHTML += `<li>${i + 1}. ${name}</li>`;
-        });
-        sheetInfoHTML += `</ul>`;
-        document.getElementById('sheet-preview').innerHTML = sheetInfoHTML;
-
-        const firstSheet = workbook.Sheets[sheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-
-        let startIndex = jsonData.findIndex(row => row.filter(cell => cell).length >= 4);
-
-        if (startIndex === -1) {
-          document.getElementById('data-preview').innerHTML = `<p class='text-red-600'>❌ Could not detect data rows in sheet.</p>`;
-          return;
-        }
-
-        const dataRows = jsonData.slice(startIndex, startIndex + 5);
-        let tableHTML = "<h3 class='text-lg font-semibold mb-2'>🧾 Preview of Data:</h3><table class='table-auto w-full text-left text-sm border rounded-xl'><thead><tr class='bg-blue-100'>";
-        dataRows[0].forEach(cell => {
-          tableHTML += `<th class='px-4 py-2'>${cell}</th>`;
-        });
-        tableHTML += "</tr></thead><tbody>";
-
-        for (let i = 1; i < dataRows.length; i++) {
-          tableHTML += "<tr class='border-t'>";
-          dataRows[i].forEach(cell => {
-            tableHTML += `<td class='px-4 py-2'>${cell || ""}</td>`;
-          });
-          tableHTML += "</tr>";
-        }
-        tableHTML += "</tbody></table>";
-
-        document.getElementById('data-preview').innerHTML = tableHTML;
-
-        // 🔁 Call analytics functions from here with jsonData.slice(startIndex)
-      };
-      reader.readAsArrayBuffer(file);
-    }
-  </script>
 </body>
 
 </html>
