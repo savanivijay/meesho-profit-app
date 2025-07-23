@@ -1,231 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Meesho Seller Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #f9fafc;
-      color: #333;
-    }
-
-    .dashboard-title {
-      font-size: 30px;
-      font-weight: 700;
-      color: #0d6efd;
-    }
-
-    .upload-area {
-      border: 2px dashed #0d6efd;
-      border-radius: 16px;
-      padding: 50px;
-      text-align: center;
-      background: #eaf1ff;
-      transition: 0.3s;
-      cursor: pointer;
-    }
-
-    .upload-area:hover {
-      background: #d6e6ff;
-    }
-
-    .card-metric, .card-input {
-      border: none;
-      border-radius: 16px;
-      padding: 20px;
-      background: linear-gradient(to bottom right, #f0f6ff, #dbeafe);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-      text-align: center;
-    }
-
-    .metric-title {
-      font-size: 15px;
-      font-weight: 500;
-      color: #555;
-    }
-
-    .metric-value {
-      font-size: 26px;
-      font-weight: 700;
-      color: #0d6efd;
-    }
-
-    .section-title {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 15px;
-    }
-
-    .sku-table th {
-      background-color: #0d6efd;
-      color: white;
-    }
-
-    .input-box {
-      font-size: 20px;
-      font-weight: bold;
-      color: #0d6efd;
-    }
-
-    .order-box {
-      background: #fff;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.04);
-      text-align: center;
-    }
-
-    .order-box h6 {
-      font-size: 14px;
-      color: #666;
-    }
-
-    .order-box span {
-      font-size: 22px;
-      font-weight: 700;
-    }
-  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-  <div class="container my-5">
-    <h2 class="text-center dashboard-title mb-4">📊 Meesho Seller Profit Dashboard</h2>
 
-    <!-- Upload Area -->
-    <div class="upload-area mb-5" onclick="document.getElementById('excelFile').click()">
-      <h5 class="mb-2">📁 Click or Drag & Drop to Upload Meesho Excel File</h5>
-      <input type="file" id="excelFile" accept=".xlsx" hidden />
+<body class="bg-gray-50 p-6">
+  <div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <h1 class="text-3xl font-bold mb-6 text-center text-purple-800">📊 Meesho Seller Dashboard</h1>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="wallet" class="w-6 h-6 text-green-600"></i>
+          <span class="text-sm text-gray-500">Total Profit</span>
+        </div>
+        <span id="totalProfit" class="text-xl font-semibold text-green-700">₹0</span>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="banknote" class="w-6 h-6 text-blue-600"></i>
+          <span class="text-sm text-gray-500">Total Settlement</span>
+        </div>
+        <span id="totalSettlement" class="text-xl font-semibold text-blue-700">₹0</span>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="package" class="w-6 h-6 text-yellow-600"></i>
+          <span class="text-sm text-gray-500">Product Cost</span>
+        </div>
+        <span id="productCost" class="text-xl font-semibold text-yellow-700">₹0</span>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="file-cog" class="w-6 h-6 text-pink-600"></i>
+          <span class="text-sm text-gray-500">Other Cost</span>
+        </div>
+        <input type="number" id="otherCost" class="w-20 px-2 py-1 border rounded-md text-right" value="0" />
+      </div>
     </div>
 
-    <!-- Total Profit Display -->
-    <div class="row mb-4">
-      <div class="col-md-12">
-        <div class="card-metric">
-          <div class="metric-title">Total Net Profit</div>
-          <div class="metric-value text-success" id="totalProfit">₹0</div>
+    <!-- Order Status Section -->
+    <div class="bg-white p-6 rounded-xl shadow-md mb-6">
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="shopping-bag" class="w-5 h-5"></i> Order Status</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+        <div class="bg-purple-100 p-4 rounded-xl">
+          <div class="text-lg font-bold text-purple-800" id="totalOrders">0</div>
+          <div class="text-sm text-purple-600">Total Orders</div>
+        </div>
+        <div class="bg-green-100 p-4 rounded-xl">
+          <div class="text-lg font-bold text-green-800" id="deliveredOrders">0</div>
+          <div class="text-sm text-green-600">Delivered</div>
+        </div>
+        <div class="bg-red-100 p-4 rounded-xl">
+          <div class="text-lg font-bold text-red-800" id="returnOrders">0</div>
+          <div class="text-sm text-red-600">Return</div>
+        </div>
+        <div class="bg-yellow-100 p-4 rounded-xl">
+          <div class="text-lg font-bold text-yellow-800" id="rtoOrders">0</div>
+          <div class="text-sm text-yellow-600">RTO</div>
         </div>
       </div>
     </div>
 
-    <!-- Editable Input Metrics -->
-    
-<div class="row g-4 mb-4">
-  <div class="col-md-3">
-    <div class="card-input">
-      <div class="metric-title">Total Settlement (₹)</div>
-      <div class="metric-value text-warning" id="otherCost">₹0</div>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="card-input">
-      <div class="metric-title">Purchase Cost (₹)</div>
-      <div class="metric-value text-warning" id="otherCost">₹0</div>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="card-input">
-      <div class="metric-title">Ad Cost (₹)</div>
-      <div class="metric-value text-warning" id="otherCost">₹0</div>
-    </div>
-  </div>
-  <div class="col-md-3">
-    <div class="card-input">
-      <div class="metric-title">Other Cost (Description)</div>
-      <input type="text" class="form-control text-center input-box" id="otherCostInput" placeholder="e.g., Packaging, Labels">
-    </div>
-  </div>
-</div>
-
-
-    <!-- Order Status Breakdown -->
-    <div class="card mb-5 p-4">
-      <h5 class="section-title">📦 Order Status Summary</h5>
-      <div class="row g-4 text-center">
-        <div class="col-md-2 col-6">
-          <div class="order-box">
-            <h6>Total Orders</h6>
-            <span id="totalOrders">0</span>
-          </div>
-        </div>
-        <div class="col-md-2 col-6">
-          <div class="order-box">
-            <h6>Delivered</h6>
-            <span class="text-success" id="delivered">0</span>
-          </div>
-        </div>
-        <div class="col-md-2 col-6">
-          <div class="order-box">
-            <h6>Return</h6>
-            <span class="text-danger" id="returns">0</span>
-          </div>
-        </div>
-        <div class="col-md-2 col-6">
-          <div class="order-box">
-            <h6>RTO</h6>
-            <span class="text-warning" id="rto">0</span>
-          </div>
-        </div>
-        <div class="col-md-2 col-6">
-          <div class="order-box">
-            <h6>Others</h6>
-            <span id="others">0</span>
-          </div>
-        </div>
-        <div class="col-md-2 col-6">
-          <div class="order-box">
-            <h6>Return Ratio</h6>
-            <span id="returnRatio">0%</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SKU Table -->
-    <div class="card p-4">
-      <h5 class="section-title">📋 SKU-wise Profit Analysis</h5>
-      <div class="table-responsive">
-        <table class="table sku-table table-bordered">
-          <thead>
+    <!-- SKU-wise Report -->
+    <div class="bg-white p-6 rounded-xl shadow-md">
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="table" class="w-5 h-5"></i> SKU-wise Report</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full border">
+          <thead class="bg-gray-100">
             <tr>
-              <th>SKU</th>
-              <th>Total Orders</th>
-              <th>Delivered/Return/RTO</th>
-              <th>Settlement</th>
-              <th>Return Loss</th>
-              <th>Cost Price</th>
-              <th>Net Profit</th>
+              <th class="border px-4 py-2">SKU</th>
+              <th class="border px-4 py-2">Total Orders</th>
+              <th class="border px-4 py-2">Delivered</th>
+              <th class="border px-4 py-2">Return</th>
+              <th class="border px-4 py-2">RTO</th>
+              <th class="border px-4 py-2">Settlement</th>
+              <th class="border px-4 py-2">Return Loss</th>
+              <th class="border px-4 py-2">Cost Price</th>
+              <th class="border px-4 py-2">Net Profit</th>
             </tr>
           </thead>
-          <tbody id="skuTableBody">
-            <tr><td colspan="7" class="text-center text-muted">No data uploaded</td></tr>
+          <tbody id="skuReport">
+            <!-- Dynamic rows go here -->
           </tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script>
-    // Optional: Auto-calculate total profit based on inputs
-    const updateProfit = () => {
-      const settlement = parseFloat(document.getElementById("settlementInput").value) || 0;
-      const purchase = parseFloat(document.getElementById("purchaseCostInput").value) || 0;
-      const ad = parseFloat(document.getElementById("adCostInput").value) || 0;
-      const other = parseFloat(document.getElementById("otherCostInput").value) || 0;
-      const profit = settlement - purchase - ad - other;
-      document.getElementById("totalProfit").textContent = `₹${profit.toLocaleString()}`;
-    };
-
-    document.querySelectorAll("input").forEach(input => {
-      input.addEventListener("input", updateProfit);
-    });
-
-    updateProfit(); // Initial run
+    lucide.createIcons();
   </script>
 </body>
+
 </html>
