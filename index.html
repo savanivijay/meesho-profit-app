@@ -7,96 +7,99 @@
   <title>Meesho Seller Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body class="bg-gray-50 p-6">
-  <div class="max-w-6xl mx-auto">
-    <!-- Header -->
-    <h1 class="text-3xl font-bold mb-6 text-center text-purple-800">📊 Meesho Seller Dashboard</h1>
+<body class="bg-gray-100 text-gray-800">
+  <div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-4 text-center">Meesho Seller Dashboard</h1>
 
-    <!-- Summary Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div class="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <i data-lucide="wallet" class="w-6 h-6 text-green-600"></i>
-          <span class="text-sm text-gray-500">Total Profit</span>
-        </div>
-        <span id="totalProfit" class="text-xl font-semibold text-green-700">₹0</span>
-      </div>
-
-      <div class="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <i data-lucide="banknote" class="w-6 h-6 text-blue-600"></i>
-          <span class="text-sm text-gray-500">Total Settlement</span>
-        </div>
-        <span id="totalSettlement" class="text-xl font-semibold text-blue-700">₹0</span>
-      </div>
-
-      <div class="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <i data-lucide="package" class="w-6 h-6 text-yellow-600"></i>
-          <span class="text-sm text-gray-500">Product Cost</span>
-        </div>
-        <span id="productCost" class="text-xl font-semibold text-yellow-700">₹0</span>
-      </div>
-
-      <div class="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <i data-lucide="file-cog" class="w-6 h-6 text-pink-600"></i>
-          <span class="text-sm text-gray-500">Other Cost</span>
-        </div>
-        <input type="number" id="otherCost" class="w-20 px-2 py-1 border rounded-md text-right" value="0" />
-      </div>
+    <!-- File Upload -->
+    <div class="mb-6">
+      <label for="fileUpload" class="block mb-2 text-lg font-medium">Upload Payment Sheet</label>
+      <input type="file" id="fileUpload" accept=".xlsx, .xls" class="p-2 border rounded w-full">
     </div>
 
-    <!-- Order Status Section -->
-    <div class="bg-white p-6 rounded-xl shadow-md mb-6">
-      <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="shopping-bag" class="w-5 h-5"></i> Order Status</h2>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-        <div class="bg-purple-100 p-4 rounded-xl">
-          <div class="text-lg font-bold text-purple-800" id="totalOrders">0</div>
-          <div class="text-sm text-purple-600">Total Orders</div>
+    <!-- Total Profit and Costs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white shadow-md rounded-lg p-4 flex items-center gap-2">
+        <i data-lucide="wallet" class="w-5 h-5 text-green-600"></i>
+        <div>
+          <h2 class="text-sm font-medium">Total Profit</h2>
+          <p class="text-xl font-semibold" id="totalProfit">₹0</p>
         </div>
-        <div class="bg-green-100 p-4 rounded-xl">
-          <div class="text-lg font-bold text-green-800" id="deliveredOrders">0</div>
-          <div class="text-sm text-green-600">Delivered</div>
+      </div>
+      <div class="bg-white shadow-md rounded-lg p-4 flex items-center gap-2">
+        <i data-lucide="banknote" class="w-5 h-5 text-blue-600"></i>
+        <div>
+          <h2 class="text-sm font-medium">Total Settlement</h2>
+          <p class="text-xl font-semibold" id="totalSettlement">₹0</p>
         </div>
-        <div class="bg-red-100 p-4 rounded-xl">
-          <div class="text-lg font-bold text-red-800" id="returnOrders">0</div>
-          <div class="text-sm text-red-600">Return</div>
+      </div>
+      <div class="bg-white shadow-md rounded-lg p-4 flex items-center gap-2">
+        <i data-lucide="megaphone" class="w-5 h-5 text-purple-600"></i>
+        <div>
+          <h2 class="text-sm font-medium">Total Ad Cost</h2>
+          <p class="text-xl font-semibold" id="totalAdCost">₹0</p>
         </div>
-        <div class="bg-yellow-100 p-4 rounded-xl">
-          <div class="text-lg font-bold text-yellow-800" id="rtoOrders">0</div>
-          <div class="text-sm text-yellow-600">RTO</div>
+      </div>
+      <div class="bg-white shadow-md rounded-lg p-4 flex items-center gap-2">
+        <i data-lucide="file-cog" class="w-5 h-5 text-red-600"></i>
+        <div>
+          <h2 class="text-sm font-medium">Other Cost</h2>
+          <input type="number" id="otherCost" placeholder="Enter cost" class="border p-1 rounded w-full">
         </div>
       </div>
     </div>
 
-    <!-- SKU-wise Report -->
-    <div class="bg-white p-6 rounded-xl shadow-md">
-      <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="table" class="w-5 h-5"></i> SKU-wise Report</h2>
-      <div class="overflow-x-auto">
-        <table class="min-w-full border">
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="border px-4 py-2">SKU</th>
-              <th class="border px-4 py-2">Total Orders</th>
-              <th class="border px-4 py-2">Delivered</th>
-              <th class="border px-4 py-2">Return</th>
-              <th class="border px-4 py-2">RTO</th>
-              <th class="border px-4 py-2">Settlement</th>
-              <th class="border px-4 py-2">Return Loss</th>
-              <th class="border px-4 py-2">Cost Price</th>
-              <th class="border px-4 py-2">Net Profit</th>
-            </tr>
-          </thead>
-          <tbody id="skuReport">
-            <!-- Dynamic rows go here -->
-          </tbody>
-        </table>
+    <!-- Order Status Breakdown -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white shadow rounded-lg p-4 text-center">
+        <i data-lucide="shopping-bag" class="w-6 h-6 mx-auto text-blue-500"></i>
+        <h3 class="text-lg font-semibold">Total Orders</h3>
+        <p id="totalOrders">0</p>
       </div>
+      <div class="bg-white shadow rounded-lg p-4 text-center">
+        <i data-lucide="truck" class="w-6 h-6 mx-auto text-green-500"></i>
+        <h3 class="text-lg font-semibold">Delivered</h3>
+        <p id="delivered">0</p>
+      </div>
+      <div class="bg-white shadow rounded-lg p-4 text-center">
+        <i data-lucide="undo" class="w-6 h-6 mx-auto text-orange-500"></i>
+        <h3 class="text-lg font-semibold">Return</h3>
+        <p id="return">0</p>
+      </div>
+      <div class="bg-white shadow rounded-lg p-4 text-center">
+        <i data-lucide="rotate-ccw" class="w-6 h-6 mx-auto text-red-500"></i>
+        <h3 class="text-lg font-semibold">RTO</h3>
+        <p id="rto">0</p>
+      </div>
+    </div>
+
+    <!-- SKU Wise Report -->
+    <div class="bg-white shadow-md rounded-lg p-4 overflow-x-auto">
+      <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+        <i data-lucide="table" class="w-5 h-5 text-indigo-600"></i>SKU-wise Report
+      </h2>
+      <table class="min-w-full text-sm text-left">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="px-4 py-2">SKU</th>
+            <th class="px-4 py-2">Total Orders</th>
+            <th class="px-4 py-2">Delivered</th>
+            <th class="px-4 py-2">Return</th>
+            <th class="px-4 py-2">RTO</th>
+            <th class="px-4 py-2">Settlement</th>
+            <th class="px-4 py-2">Return Loss</th>
+            <th class="px-4 py-2">Cost Price</th>
+            <th class="px-4 py-2">Net Profit</th>
+          </tr>
+        </thead>
+        <tbody id="skuReportBody">
+          <!-- Dynamic rows go here -->
+        </tbody>
+      </table>
     </div>
   </div>
 
