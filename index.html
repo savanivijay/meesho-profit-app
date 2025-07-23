@@ -52,27 +52,36 @@
     </div>
 
     <!-- Order Status Section -->
-    <div class="bg-white p-6 rounded-xl shadow-md mb-6">
-      <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="shopping-bag" class="w-5 h-5"></i> Order Status</h2>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-        <div class="bg-purple-100 p-4 rounded-xl">
-          <div class="text-lg font-bold text-purple-800" id="totalOrders">0</div>
-          <div class="text-sm text-purple-600">Total Orders</div>
-        </div>
-        <div class="bg-green-100 p-4 rounded-xl">
-          <div class="text-lg font-bold text-green-800" id="deliveredOrders">0</div>
-          <div class="text-sm text-green-600">Delivered</div>
-        </div>
-        <div class="bg-red-100 p-4 rounded-xl">
-          <div class="text-lg font-bold text-red-800" id="returnOrders">0</div>
-          <div class="text-sm text-red-600">Return</div>
-        </div>
-        <div class="bg-yellow-100 p-4 rounded-xl">
-          <div class="text-lg font-bold text-yellow-800" id="rtoOrders">0</div>
-          <div class="text-sm text-yellow-600">RTO</div>
-        </div>
-      </div>
+<div class="bg-white p-6 rounded-xl shadow-md mb-6">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-xl font-bold flex items-center gap-2">
+      <i data-lucide="shopping-bag" class="w-5 h-5"></i> Order Status
+    </h2>
+    <div class="bg-purple-100 px-4 py-1 rounded-full text-sm font-semibold text-purple-800 flex items-center gap-2">
+      <span>Total Orders:</span>
+      <span id="orderStatusTotalOrders">0</span>
     </div>
+  </div>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+    <div class="bg-purple-100 p-4 rounded-xl">
+      <div class="text-lg font-bold text-purple-800" id="totalOrders">0</div>
+      <div class="text-sm text-purple-600">Total Orders</div>
+    </div>
+    <div class="bg-green-100 p-4 rounded-xl">
+      <div class="text-lg font-bold text-green-800" id="deliveredOrders">0</div>
+      <div class="text-sm text-green-600">Delivered</div>
+    </div>
+    <div class="bg-red-100 p-4 rounded-xl">
+      <div class="text-lg font-bold text-red-800" id="returnOrders">0</div>
+      <div class="text-sm text-red-600">Return</div>
+    </div>
+    <div class="bg-yellow-100 p-4 rounded-xl">
+      <div class="text-lg font-bold text-yellow-800" id="rtoOrders">0</div>
+      <div class="text-sm text-yellow-600">RTO</div>
+    </div>
+  </div>
+</div>
+
 
     <!-- SKU-wise Report -->
     <div class="bg-white p-6 rounded-xl shadow-md">
