@@ -4,174 +4,99 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meesho Seller Profit Tool</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(to right, #f7fafc, #e3f2fd);
-    }
-    .glass-card {
-      background: rgba(255, 255, 255, 0.4);
-      backdrop-filter: blur(10px);
-      border-radius: 1rem;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-    .fade-in {
-      animation: fadeInUp 1s ease-in-out;
-    }
-    @keyframes fadeInUp {
-      0% {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  </style>
+  <title>Ecom Detective | Meesho Profit Calculator Tool</title>
+  <meta name="description" content="Track your Meesho profits in seconds. Just upload your payment sheet, enter cost, and get a full breakdown—profits, return loss, SKU-wise reports & more. Free, fast & made for sellers." />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
-<body class="text-gray-800">
-  <!-- Hero -->
-  <section class="text-center py-20 px-6 fade-in">
-    <h1 class="text-4xl md:text-6xl font-bold mb-4">📊 Meesho Profit Dashboard</h1>
-    <p class="text-lg md:text-xl max-w-2xl mx-auto">Built for sellers, by a seller. Track profit, return loss, and settlement without breaking a sweat 💸</p>
-    <a href="#dashboard" class="inline-block mt-6 bg-blue-600 text-white px-6 py-3 rounded-xl shadow hover:bg-blue-700 transition">Jump to Dashboard 🚀</a>
+<body class="bg-gray-50 text-gray-800">
+  <!-- Hero Section -->
+  <section class="bg-white text-center py-20 px-4">
+    <h1 class="text-4xl md:text-5xl font-extrabold text-indigo-600 mb-6">Ecom Detective</h1>
+    <p class="text-xl mb-8">The easiest way to calculate Meesho profit, return loss & real earning 📊</p>
+    <a href="#tool" class="bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-xl font-medium text-lg shadow-lg">Try the Tool</a>
   </section>
 
-  <!-- Features -->
-  <section class="px-6 py-12 bg-white">
-    <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
-      <div class="glass-card p-6 fade-in">
-        <i class="ph ph-wallet text-4xl text-blue-600"></i>
-        <h3 class="text-xl font-bold mt-2">Profit, But Make It Simple</h3>
-        <p class="mt-2 text-sm">Know what you *actually* earned after returns, ads, packaging & other hidden costs. Clean. Instant. No maths stress.</p>
-      </div>
-      <div class="glass-card p-6 fade-in">
-        <i class="ph ph-trend-up text-4xl text-green-600"></i>
-        <h3 class="text-xl font-bold mt-2">Real-Time Analysis</h3>
-        <p class="mt-2 text-sm">Upload Meesho Payment Sheet + Your Cost → See SKU-wise profit magic in seconds 🧮✨</p>
-      </div>
-      <div class="glass-card p-6 fade-in">
-        <i class="ph ph-shield-check text-4xl text-purple-600"></i>
-        <h3 class="text-xl font-bold mt-2">Built for Teams</h3>
-        <p class="mt-2 text-sm">Let employees manage their own sheets. Track per person, per SKU. We keep it smooth and secure 👥🔐</p>
+  <!-- How It Works Section -->
+  <section class="py-16 px-4 bg-indigo-50">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-10">How it Works 🔍</h2>
+      <div class="grid md:grid-cols-3 gap-8 text-center">
+        <div class="p-6 bg-white rounded-xl shadow-md">
+          <h3 class="text-xl font-semibold mb-2">Step 1</h3>
+          <p>Upload your Meesho Payment Excel File</p>
+        </div>
+        <div class="p-6 bg-white rounded-xl shadow-md">
+          <h3 class="text-xl font-semibold mb-2">Step 2</h3>
+          <p>Enter your product cost (and other costs if needed)</p>
+        </div>
+        <div class="p-6 bg-white rounded-xl shadow-md">
+          <h3 class="text-xl font-semibold mb-2">Step 3</h3>
+          <p>Instantly get full profit reports with charts 🎯</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- How It Works -->
-  <section class="px-6 py-16 bg-gradient-to-br from-indigo-50 to-purple-100">
+  <!-- Live Demo Section -->
+  <section class="py-16 px-4 bg-white" id="tool">
     <div class="max-w-4xl mx-auto text-center">
-      <h2 class="text-3xl font-bold mb-8">How It Works 🎯</h2>
-      <div class="grid sm:grid-cols-3 gap-8">
-        <div class="fade-in">
-          <div class="text-4xl mb-2">📁</div>
-          <p><strong>Step 1:</strong> Upload Meesho Payment Excel file</p>
-        </div>
-        <div class="fade-in">
-          <div class="text-4xl mb-2">✍️</div>
-          <p><strong>Step 2:</strong> Add your product cost manually</p>
-        </div>
-        <div class="fade-in">
-          <div class="text-4xl mb-2">📊</div>
-          <p><strong>Step 3:</strong> Get dashboard + profit analytics in 1 click</p>
-        </div>
+      <h2 class="text-3xl font-bold mb-4">Live Demo 🎥</h2>
+      <p class="mb-6 text-lg">Watch how Ecom Detective calculates profit in real-time.</p>
+      <div class="rounded-xl overflow-hidden shadow-lg">
+        <iframe width="100%" height="400" src="https://www.youtube.com/embed/YOUR_DEMO_VIDEO" frameborder="0" allowfullscreen></iframe>
       </div>
     </div>
   </section>
 
-  <!-- Dashboard Section -->
-  <section id="dashboard" class="px-6 py-20 bg-white">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="text-3xl font-bold mb-8 text-center">Your Live Dashboard 💼</h2>
-      <!-- Embed original dashboard layout here -->
-      <!-- You can keep or replace with your tool HTML -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="glass-card p-4 text-center fade-in">
-          <i class="ph ph-wallet text-3xl text-blue-600"></i>
-          <p class="text-sm mt-1">Total Settlement</p>
-          <h3 class="text-xl font-bold">₹00,000</h3>
-        </div>
-        <div class="glass-card p-4 text-center fade-in">
-          <i class="ph ph-banknote text-3xl text-green-600"></i>
-          <p class="text-sm mt-1">Total Profit</p>
-          <h3 class="text-xl font-bold">₹00,000</h3>
-        </div>
-        <div class="glass-card p-4 text-center fade-in">
-          <i class="ph ph-megaphone text-3xl text-yellow-500"></i>
-          <p class="text-sm mt-1">Ad Spend</p>
-          <h3 class="text-xl font-bold">₹0,000</h3>
-        </div>
-        <div class="glass-card p-4 text-center fade-in">
-          <i class="ph ph-package text-3xl text-purple-500"></i>
-          <p class="text-sm mt-1">Return Loss</p>
-          <h3 class="text-xl font-bold">₹0,000</h3>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Testimonials -->
-  <section class="bg-gradient-to-tr from-pink-100 to-yellow-100 py-20 px-6">
+  <!-- Testimonials Section -->
+  <section class="bg-indigo-600 text-white py-16 px-4">
     <div class="max-w-5xl mx-auto text-center">
-      <h2 class="text-3xl font-bold mb-10">What Sellers Are Saying 💬</h2>
+      <h2 class="text-3xl font-bold mb-8">What Sellers Are Saying 💬</h2>
       <div class="grid md:grid-cols-3 gap-6">
-        <div class="glass-card p-6 fade-in">
-          <p class="text-sm italic">“Finally, I understand my real profit 😭 This tool is like an accountant + data scientist for my Meesho biz.”</p>
-          <h4 class="mt-4 font-bold">— Anjali (Tier-2 Seller)</h4>
+        <div class="bg-white text-gray-800 p-6 rounded-xl shadow-lg">
+          <p>“I didn’t even realize how much I was losing on returns! This tool opened my eyes.”</p>
+          <p class="mt-4 font-semibold">— Radhika, Surat</p>
         </div>
-        <div class="glass-card p-6 fade-in">
-          <p class="text-sm italic">“I gave access to my team and they track everything SKU-wise. My life = easier 💯”</p>
-          <h4 class="mt-4 font-bold">— Rajat (Private Label Owner)</h4>
+        <div class="bg-white text-gray-800 p-6 rounded-xl shadow-lg">
+          <p>“Super simple to use, and I now track profit per SKU like a pro!”</p>
+          <p class="mt-4 font-semibold">— Faizan, Delhi</p>
         </div>
-        <div class="glass-card p-6 fade-in">
-          <p class="text-sm italic">“Was struggling to make ₹1L monthly. After this tool, I fixed return loss + ads. Game changer.”</p>
-          <h4 class="mt-4 font-bold">— Pooja (Women’s Wear Seller)</h4>
+        <div class="bg-white text-gray-800 p-6 rounded-xl shadow-lg">
+          <p>“No more Excel headache. I just upload and boom, full report!”</p>
+          <p class="mt-4 font-semibold">— Shruti, Bangalore</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="text-center py-20 px-6 bg-white">
-    <h2 class="text-3xl font-bold mb-4">Ready to see your profit reality? 🔍</h2>
-    <p class="mb-6">Upload your Meesho Excel sheet, add cost, and let our dashboard do the magic. No login, no BS. Just data clarity 💡</p>
-    <a href="#dashboard" class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-xl shadow hover:bg-indigo-700 transition">Try It Now 🚀</a>
+  <!-- SEO Content / FAQs Section -->
+  <section class="py-20 px-4 bg-gray-100">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-3xl font-bold mb-8 text-center">FAQs for Curious Sellers 🙋‍♂️</h2>
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-xl font-semibold">Q. Is this tool free to use?</h3>
+          <p>✅ Yes! Totally free. No sign-up, no payment, just upload and go.</p>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold">Q. How does it calculate my profit?</h3>
+          <p>We use your Meesho Payment data and subtract your cost price, ad cost, packaging, return loss & other charges to show accurate profit.</p>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold">Q. Can I trust this tool?</h3>
+          <p>Built by real sellers for sellers. 100% offline, secure, and private—your data stays with you.</p>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- Footer -->
-  <footer class="text-center py-6 text-sm text-gray-500 bg-gray-50">
-    © 2025 Meesho Profit Tool • Made with 💙 for Indian sellers
+  <footer class="bg-indigo-900 text-white py-8 text-center">
+    <p>&copy; 2025 EcomDetective.com — Made with ❤️ for Indian sellers</p>
   </footer>
-  <!-- Onboarding Popup -->
-<div id="onboardingPopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-  <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-md space-y-4 text-center relative">
-    <button onclick="closePopup()" class="absolute top-2 right-2 text-gray-500 hover:text-black">✖️</button>
-
-    <h2 class="text-2xl font-bold text-indigo-600">👋 Welcome to Ecom Detective</h2>
-    <p class="text-gray-600">Let's get you started with your Profit Report in 3 easy steps!</p>
-
-    <ul class="text-left text-sm text-gray-700 space-y-2">
-      <li>✅ <strong>Step 1:</strong> Upload your Meesho Payment Excel (.xlsx)</li>
-      <li>✅ <strong>Step 2:</strong> Enter cost price, packaging, and ad costs manually</li>
-      <li>✅ <strong>Step 3:</strong> See total profit, order breakdown & return loss instantly!</li>
-    </ul>
-
-    <button onclick="closePopup()" class="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition">Let’s Go 🚀</button>
-  </div>
-</div>
-
-<script>
-  function closePopup() {
-    document.getElementById('onboardingPopup').style.display = 'none';
-  }
-</script>
 
 </body>
 
