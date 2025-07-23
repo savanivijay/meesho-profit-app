@@ -9,125 +9,121 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://unpkg.com/@popperjs/core@2"></script>
   <style>
-    .gradient-card {
-      background: linear-gradient(to right, #fdfbfb, #ebedee);
+    body {
+      background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    .fade-in {
-      animation: fadeIn 1s ease-in-out both;
+    .glass {
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
     }
   </style>
 </head>
 
-<body class="bg-gradient-to-tr from-purple-50 to-pink-50 min-h-screen p-6 font-sans">
-  <div class="max-w-7xl mx-auto space-y-10 fade-in">
+<body class="min-h-screen p-8 text-white">
+  <div class="max-w-7xl mx-auto space-y-12">
     <!-- Header -->
-    <header class="text-center fade-in">
-      <h1 class="text-4xl font-extrabold text-purple-700 tracking-tight">📊 Meesho Seller Dashboard</h1>
-      <p class="text-md text-gray-600 mt-2 italic">Your performance insights at a glance</p>
+    <header class="text-center">
+      <h1 class="text-5xl font-extrabold drop-shadow-md">🚀 Meesho Seller Dashboard</h1>
+      <p class="mt-3 text-lg text-white/80">Track, Analyze & Grow Your Online Sales</p>
     </header>
 
-    <!-- Profit Overview Section -->
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="bg-white gradient-card p-6 rounded-2xl shadow-xl text-center transition hover:scale-105 duration-300">
-        <div class="text-xl font-semibold text-gray-600 flex justify-center gap-2 items-center">
-          <i data-lucide="wallet" class="w-6 h-6 text-green-600 animate-bounce"></i> Total Profit
-        </div>
-        <div class="text-4xl font-bold text-green-700 mt-2" id="totalProfit">₹0</div>
+    <!-- Hero Card Section -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="glass rounded-3xl p-6 text-center shadow-xl floating">
+        <i data-lucide="wallet" class="w-8 h-8 mx-auto text-green-300"></i>
+        <h2 class="text-xl mt-2 font-semibold">Total Profit</h2>
+        <p class="text-3xl mt-2 font-bold text-green-200" id="totalProfit">₹0</p>
       </div>
-      <div class="bg-white gradient-card p-6 rounded-2xl shadow-xl text-center transition hover:scale-105 duration-300">
-        <div class="text-xl font-semibold text-gray-600 flex justify-center gap-2 items-center">
-          <i data-lucide="banknote" class="w-6 h-6 text-blue-600 animate-pulse"></i> Total Settlement
-        </div>
-        <div class="text-4xl font-bold text-blue-700 mt-2" id="totalSettlement">₹0</div>
+      <div class="glass rounded-3xl p-6 text-center shadow-xl">
+        <i data-lucide="banknote" class="w-8 h-8 mx-auto text-blue-200"></i>
+        <h2 class="text-xl mt-2 font-semibold">Total Settlement</h2>
+        <p class="text-3xl mt-2 font-bold text-blue-100" id="totalSettlement">₹0</p>
       </div>
-      <div class="bg-white gradient-card p-6 rounded-2xl shadow-xl text-center transition hover:scale-105 duration-300">
-        <div class="text-xl font-semibold text-gray-600 flex justify-center gap-2 items-center">
-          <i data-lucide="file-cog" class="w-6 h-6 text-pink-600"></i> Other Cost
-        </div>
-        <input type="number" id="otherCost" class="mt-3 text-center border w-full py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-300 text-lg" value="0" />
+      <div class="glass rounded-3xl p-6 text-center shadow-xl">
+        <i data-lucide="file-cog" class="w-8 h-8 mx-auto text-pink-200"></i>
+        <h2 class="text-xl mt-2 font-semibold">Other Cost</h2>
+        <input type="number" id="otherCost" value="0" class="mt-2 bg-white/30 text-white text-xl px-4 py-2 rounded-xl w-full text-center placeholder-white/50" placeholder="₹0" />
       </div>
-    </section>
+    </div>
 
-    <!-- Cost Section -->
-    <section class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-      <div class="bg-white gradient-card p-6 rounded-2xl shadow-xl text-center transition hover:scale-105 duration-300">
-        <div class="text-xl font-semibold text-gray-600 flex justify-center gap-2 items-center">
-          <i data-lucide="megaphone" class="w-6 h-6 text-yellow-600"></i> Ads Cost
-        </div>
-        <div class="text-3xl font-bold text-yellow-700 mt-2" id="adsCost">₹0</div>
+    <!-- Sub Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div class="glass rounded-3xl p-6 text-center shadow-xl">
+        <i data-lucide="megaphone" class="w-8 h-8 mx-auto text-yellow-100"></i>
+        <h2 class="text-xl mt-2 font-semibold">Ads Cost</h2>
+        <p class="text-3xl mt-2 font-bold text-yellow-50" id="adsCost">₹0</p>
       </div>
-      <div class="bg-white gradient-card p-6 rounded-2xl shadow-xl text-center transition hover:scale-105 duration-300">
-        <div class="text-xl font-semibold text-gray-600 flex justify-center gap-2 items-center">
-          <i data-lucide="package-search" class="w-6 h-6 text-yellow-600"></i> Product Cost
-        </div>
-        <div class="text-3xl font-bold text-yellow-700 mt-2" id="productCost">₹0</div>
+      <div class="glass rounded-3xl p-6 text-center shadow-xl">
+        <i data-lucide="package-search" class="w-8 h-8 mx-auto text-yellow-100"></i>
+        <h2 class="text-xl mt-2 font-semibold">Product Cost</h2>
+        <p class="text-3xl mt-2 font-bold text-yellow-50" id="productCost">₹0</p>
       </div>
-    </section>
+    </div>
 
     <!-- Order Status Section -->
-    <section class="bg-white p-6 rounded-2xl shadow-md fade-in">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-purple-800 flex items-center gap-2">
-          <i data-lucide="shopping-bag" class="w-5 h-5"></i> Order Status
-        </h2>
-        <div class="bg-purple-100 px-4 py-1 rounded-full text-sm font-semibold text-purple-800 flex items-center gap-2">
-          <span>Total Orders:</span>
-          <span id="orderStatusTotalOrders">0</span>
+    <div class="glass rounded-3xl p-6 shadow-xl">
+      <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+        <i data-lucide="shopping-bag" class="w-6 h-6"></i> Order Status
+      </h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
+        <div class="bg-purple-200/30 rounded-xl p-4 text-center">
+          <p class="text-xl font-bold" id="totalOrders">0</p>
+          <p class="text-sm text-white/70">Total Orders</p>
+        </div>
+        <div class="bg-green-200/30 rounded-xl p-4 text-center">
+          <p class="text-xl font-bold" id="deliveredOrders">0</p>
+          <p class="text-sm text-white/70">Delivered</p>
+        </div>
+        <div class="bg-red-200/30 rounded-xl p-4 text-center">
+          <p class="text-xl font-bold" id="returnOrders">0</p>
+          <p class="text-sm text-white/70">Return</p>
+        </div>
+        <div class="bg-yellow-200/30 rounded-xl p-4 text-center">
+          <p class="text-xl font-bold" id="rtoOrders">0</p>
+          <p class="text-sm text-white/70">RTO</p>
         </div>
       </div>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-        <div class="bg-purple-100 p-4 rounded-xl transition hover:scale-105 duration-300">
-          <div class="text-xl font-bold text-purple-800" id="totalOrders">0</div>
-          <div class="text-sm text-purple-600">Total Orders</div>
-        </div>
-        <div class="bg-green-100 p-4 rounded-xl transition hover:scale-105 duration-300">
-          <div class="text-xl font-bold text-green-800" id="deliveredOrders">0</div>
-          <div class="text-sm text-green-600">Delivered</div>
-        </div>
-        <div class="bg-red-100 p-4 rounded-xl transition hover:scale-105 duration-300">
-          <div class="text-xl font-bold text-red-800" id="returnOrders">0</div>
-          <div class="text-sm text-red-600">Return</div>
-        </div>
-        <div class="bg-yellow-100 p-4 rounded-xl transition hover:scale-105 duration-300">
-          <div class="text-xl font-bold text-yellow-800" id="rtoOrders">0</div>
-          <div class="text-sm text-yellow-600">RTO</div>
-        </div>
-      </div>
-    </section>
+    </div>
 
-    <!-- SKU-wise Report -->
-    <section class="bg-white p-6 rounded-2xl shadow-md fade-in">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+    <!-- SKU Report -->
+    <div class="glass rounded-3xl p-6 shadow-xl">
+      <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
         <i data-lucide="table" class="w-5 h-5"></i> SKU-wise Report
       </h2>
-      <div class="overflow-x-auto">
-        <table class="min-w-full border border-gray-200">
-          <thead class="bg-gray-100 text-gray-600">
+      <div class="overflow-auto">
+        <table class="min-w-full border border-white/30 text-sm">
+          <thead class="bg-white/20">
             <tr>
-              <th class="border px-4 py-2">SKU</th>
-              <th class="border px-4 py-2">Total Orders</th>
-              <th class="border px-4 py-2">Delivered</th>
-              <th class="border px-4 py-2">Return</th>
-              <th class="border px-4 py-2">RTO</th>
-              <th class="border px-4 py-2">Settlement</th>
-              <th class="border px-4 py-2">Return Loss</th>
-              <th class="border px-4 py-2">Cost Price</th>
-              <th class="border px-4 py-2">Net Profit</th>
+              <th class="px-4 py-2 border border-white/30">SKU</th>
+              <th class="px-4 py-2 border border-white/30">Total Orders</th>
+              <th class="px-4 py-2 border border-white/30">Delivered</th>
+              <th class="px-4 py-2 border border-white/30">Return</th>
+              <th class="px-4 py-2 border border-white/30">RTO</th>
+              <th class="px-4 py-2 border border-white/30">Settlement</th>
+              <th class="px-4 py-2 border border-white/30">Return Loss</th>
+              <th class="px-4 py-2 border border-white/30">Cost Price</th>
+              <th class="px-4 py-2 border border-white/30">Net Profit</th>
             </tr>
           </thead>
           <tbody id="skuReport">
-            <!-- Dynamic rows go here -->
+            <!-- Dynamic rows -->
           </tbody>
         </table>
       </div>
-    </section>
+    </div>
   </div>
+
   <script>
     lucide.createIcons();
   </script>
