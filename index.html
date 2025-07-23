@@ -12,96 +12,91 @@
 </head>
 
 <body class="bg-gray-50 p-6">
-  <div class="max-w-7xl mx-auto space-y-6">
-    <h1 class="text-3xl font-bold text-center">📊 Meesho Seller Dashboard</h1>
+  <div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <h1 class="text-3xl font-bold mb-6 text-center text-purple-800">📊 Meesho Seller Dashboard</h1>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-white shadow-md p-4 rounded-xl">
-        <div class="flex items-center gap-2 text-lg font-semibold">
-          <i data-lucide="wallet" class="w-5 h-5 text-green-600"></i>
-          Total Profit: ₹<span id="totalProfit">0</span>
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="wallet" class="w-6 h-6 text-green-600"></i>
+          <span class="text-sm text-gray-500">Total Profit</span>
         </div>
+        <span id="totalProfit" class="text-xl font-semibold text-green-700">₹0</span>
       </div>
-      <div class="bg-white shadow-md p-4 rounded-xl">
-        <div class="flex items-center gap-2 text-lg font-semibold">
-          <i data-lucide="banknote" class="w-5 h-5 text-blue-600"></i>
-          Total Settlement: ₹<span id="totalSettlement">0</span>
+
+      <div class="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="banknote" class="w-6 h-6 text-blue-600"></i>
+          <span class="text-sm text-gray-500">Total Settlement</span>
         </div>
+        <span id="totalSettlement" class="text-xl font-semibold text-blue-700">₹0</span>
       </div>
-      <div class="bg-white shadow-md p-4 rounded-xl">
-        <div class="flex items-center gap-2 text-lg font-semibold">
-          <i data-lucide="package" class="w-5 h-5 text-yellow-600"></i>
-          Product Cost: ₹<span id="productCost">0</span>
+
+      <div class="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="package" class="w-6 h-6 text-yellow-600"></i>
+          <span class="text-sm text-gray-500">Product Cost</span>
         </div>
+        <span id="productCost" class="text-xl font-semibold text-yellow-700">₹0</span>
       </div>
-      <div class="bg-white shadow-md p-4 rounded-xl">
-        <div class="flex items-center gap-2 text-lg font-semibold">
-          <i data-lucide="file-cog" class="w-5 h-5 text-red-600"></i>
-          Other Cost: ₹<input type="number" id="otherCost" class="border rounded p-1 w-20">
+
+      <div class="bg-white p-4 rounded-xl shadow-md flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="file-cog" class="w-6 h-6 text-pink-600"></i>
+          <span class="text-sm text-gray-500">Other Cost</span>
         </div>
+        <input type="number" id="otherCost" class="w-20 px-2 py-1 border rounded-md text-right" value="0" />
       </div>
-      <div class="bg-white shadow-md p-4 rounded-xl">
-        <div class="flex items-center gap-2 text-lg font-semibold">
-          <i data-lucide="megaphone" class="w-5 h-5 text-purple-600"></i>
-          Ad Cost: ₹<span id="adCost">0</span>
+    </div>
+
+    <!-- Order Status Section -->
+    <div class="bg-white p-6 rounded-xl shadow-md mb-6">
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="shopping-bag" class="w-5 h-5"></i> Order Status</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+        <div class="bg-purple-100 p-4 rounded-xl">
+          <div class="text-lg font-bold text-purple-800" id="totalOrders">0</div>
+          <div class="text-sm text-purple-600">Total Orders</div>
+        </div>
+        <div class="bg-green-100 p-4 rounded-xl">
+          <div class="text-lg font-bold text-green-800" id="deliveredOrders">0</div>
+          <div class="text-sm text-green-600">Delivered</div>
+        </div>
+        <div class="bg-red-100 p-4 rounded-xl">
+          <div class="text-lg font-bold text-red-800" id="returnOrders">0</div>
+          <div class="text-sm text-red-600">Return</div>
+        </div>
+        <div class="bg-yellow-100 p-4 rounded-xl">
+          <div class="text-lg font-bold text-yellow-800" id="rtoOrders">0</div>
+          <div class="text-sm text-yellow-600">RTO</div>
         </div>
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-white p-4 rounded-xl shadow-md">
-        <div class="flex items-center gap-2 font-medium">
-          <i data-lucide="shopping-bag" class="w-5 h-5 text-gray-600"></i>
-          Total Orders: <span id="totalOrders">0</span>
-        </div>
-      </div>
-      <div class="bg-white p-4 rounded-xl shadow-md">
-        <div class="flex items-center gap-2 font-medium">
-          <i data-lucide="truck" class="w-5 h-5 text-green-500"></i>
-          Delivered: <span id="deliveredOrders">0</span>
-        </div>
-      </div>
-      <div class="bg-white p-4 rounded-xl shadow-md">
-        <div class="flex items-center gap-2 font-medium">
-          <i data-lucide="undo" class="w-5 h-5 text-red-500"></i>
-          Return: <span id="returnOrders">0</span>
-        </div>
-      </div>
-      <div class="bg-white p-4 rounded-xl shadow-md">
-        <div class="flex items-center gap-2 font-medium">
-          <i data-lucide="rotate-ccw" class="w-5 h-5 text-yellow-500"></i>
-          RTO: <span id="rtoOrders">0</span>
-        </div>
-      </div>
-    </div>
-
+    <!-- SKU-wise Report -->
     <div class="bg-white p-6 rounded-xl shadow-md">
-      <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-        <i data-lucide="table" class="w-5 h-5"></i> SKU-wise Report
-      </h2>
+      <h2 class="text-xl font-bold mb-4 flex items-center gap-2"><i data-lucide="table" class="w-5 h-5"></i> SKU-wise Report</h2>
       <div class="overflow-x-auto">
-        <table class="min-w-full text-sm text-left">
+        <table class="min-w-full border">
           <thead class="bg-gray-100">
             <tr>
-              <th class="px-4 py-2">SKU</th>
-              <th class="px-4 py-2">Total Orders</th>
-              <th class="px-4 py-2">Delivered</th>
-              <th class="px-4 py-2">Return</th>
-              <th class="px-4 py-2">RTO</th>
-              <th class="px-4 py-2">Settlement</th>
-              <th class="px-4 py-2">Return Loss</th>
-              <th class="px-4 py-2">Cost Price</th>
-              <th class="px-4 py-2">Net Profit</th>
+              <th class="border px-4 py-2">SKU</th>
+              <th class="border px-4 py-2">Total Orders</th>
+              <th class="border px-4 py-2">Delivered</th>
+              <th class="border px-4 py-2">Return</th>
+              <th class="border px-4 py-2">RTO</th>
+              <th class="border px-4 py-2">Settlement</th>
+              <th class="border px-4 py-2">Return Loss</th>
+              <th class="border px-4 py-2">Cost Price</th>
+              <th class="border px-4 py-2">Net Profit</th>
             </tr>
           </thead>
-          <tbody id="skuReportTableBody"></tbody>
+          <tbody id="skuReport">
+            <!-- Dynamic rows go here -->
+          </tbody>
         </table>
       </div>
-    </div>
-
-    <div class="bg-white p-6 rounded-xl shadow-md">
-      <h2 class="text-xl font-semibold mb-4">Upload Meesho Sheet</h2>
-      <input type="file" id="fileUpload" class="p-2 border rounded">
     </div>
   </div>
 
