@@ -4,150 +4,148 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ecom Detective – Ad Spend Tracker Tool</title>
+  <title>EcomDetective - Meesho Seller Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4f46e5',
+            secondary: '#f59e0b',
+            light: '#f3f4f6',
+          },
+        }
+      }
+    }
+  </script>
 </head>
 
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-light text-gray-800">
   <!-- Header -->
   <header class="bg-white shadow-md p-4 sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <h1 class="text-2xl font-bold text-indigo-600">EcomDetective</h1>
-      <nav class="hidden md:flex space-x-6">
-        <a href="#how" class="hover:text-indigo-500">How It Works</a>
-        <a href="#demo" class="hover:text-indigo-500">Demo</a>
-        <a href="#testimonials" class="hover:text-indigo-500">Testimonials</a>
-        <a href="#login" class="hover:text-indigo-500">Login</a>
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <h1 class="text-xl font-bold text-primary">EcomDetective</h1>
+      <nav class="hidden md:flex gap-6 font-medium">
+        <a href="#features" class="hover:text-primary">Features</a>
+        <a href="#how-it-works" class="hover:text-primary">How It Works</a>
+        <a href="#demo" class="hover:text-primary">Demo</a>
+        <a href="#testimonials" class="hover:text-primary">Testimonials</a>
+        <a href="#login" class="hover:text-primary">Login</a>
       </nav>
-      <button id="mobileMenuBtn" class="md:hidden text-2xl">
-        <i class="ph ph-list"></i>
+      <button class="md:hidden" onclick="toggleMobileMenu()">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
       </button>
     </div>
-    <!-- Mobile Menu -->
-    <div id="mobileMenu" class="hidden md:hidden bg-white p-4 space-y-2">
-      <a href="#how" class="block">How It Works</a>
-      <a href="#demo" class="block">Demo</a>
-      <a href="#testimonials" class="block">Testimonials</a>
-      <a href="#login" class="block">Login</a>
+    <div id="mobileMenu" class="hidden md:hidden bg-white p-4 mt-2 shadow-md rounded-md">
+      <a href="#features" class="block py-2">Features</a>
+      <a href="#how-it-works" class="block py-2">How It Works</a>
+      <a href="#demo" class="block py-2">Demo</a>
+      <a href="#testimonials" class="block py-2">Testimonials</a>
+      <a href="#login" class="block py-2">Login</a>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="text-center py-20 px-6 bg-gradient-to-r from-indigo-100 to-purple-100">
-    <h2 class="text-4xl font-bold mb-4">Track Your Ad Spend. Boost Your Profits.</h2>
-    <p class="text-lg text-gray-700 mb-6 max-w-xl mx-auto">Simple, powerful tool to manage your Amazon, Flipkart, and Meesho ad spends like a pro. No confusion. No math. Just clear profits.</p>
-    <a href="#demo" class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700">Try Demo</a>
+  <!-- Hero -->
+  <section class="text-center py-20 bg-white">
+    <h2 class="text-4xl font-bold mb-4">🕵️‍♂️ Track. Analyze. Scale.</h2>
+    <p class="text-lg mb-6">Welcome to your personal Meesho Business Assistant – built for smart Gen-Z sellers like you 🚀</p>
+    <a href="#demo" class="bg-primary text-white px-6 py-3 rounded-full hover:bg-indigo-600">Try the Demo</a>
   </section>
 
-  <!-- How It Works Section -->
-  <section id="how" class="py-16 px-6 max-w-6xl mx-auto">
-    <h3 class="text-3xl font-bold mb-8 text-center">📊 How It Works</h3>
-    <div class="grid md:grid-cols-3 gap-6 text-center">
-      <div class="bg-white p-6 rounded-xl shadow">
-        <i class="ph ph-upload-simple text-4xl text-indigo-600"></i>
-        <h4 class="font-bold mt-4">1. Upload Payment Sheet</h4>
-        <p class="text-gray-600 mt-2">Just drop your Meesho sheet and boom, we handle the rest!</p>
+  <!-- Features -->
+  <section id="features" class="max-w-6xl mx-auto py-20 px-4">
+    <h3 class="text-3xl font-bold text-center mb-12">✨ Key Features</h3>
+    <div class="grid md:grid-cols-3 gap-10 text-center">
+      <div class="bg-white p-6 rounded-xl shadow hover:shadow-xl transition">
+        <lottie-player src="https://lottie.host/e16e1444-60a7-4a9a-b1fa-0207a1df3a0b/QKMBB8HdVa.json" background="transparent" speed="1" loop autoplay class="h-32 mx-auto"></lottie-player>
+        <h4 class="text-xl font-semibold mt-4">Profit Calculator</h4>
+        <p class="mt-2 text-sm text-gray-600">Know your exact net profit after all deductions – zero maths required.</p>
       </div>
-      <div class="bg-white p-6 rounded-xl shadow">
-        <i class="ph ph-pencil-simple text-4xl text-indigo-600"></i>
-        <h4 class="font-bold mt-4">2. Enter Cost Details</h4>
-        <p class="text-gray-600 mt-2">Add your ad spend, product cost, return loss, and more manually.</p>
+      <div class="bg-white p-6 rounded-xl shadow hover:shadow-xl transition">
+        <lottie-player src="https://lottie.host/c2cb2b1d-45f7-4eb4-83a7-c3c5ac9ed4a8/6EVEZ65KKW.json" background="transparent" speed="1" loop autoplay class="h-32 mx-auto"></lottie-player>
+        <h4 class="text-xl font-semibold mt-4">Return Ratio Tracker</h4>
+        <p class="mt-2 text-sm text-gray-600">Keep a sharp eye on returns so you can reduce losses smartly.</p>
       </div>
-      <div class="bg-white p-6 rounded-xl shadow">
-        <i class="ph ph-graph text-4xl text-indigo-600"></i>
-        <h4 class="font-bold mt-4">3. Track & Analyze</h4>
-        <p class="text-gray-600 mt-2">See your net profit, ROAS, and SKU-wise breakdown in seconds.</p>
+      <div class="bg-white p-6 rounded-xl shadow hover:shadow-xl transition">
+        <lottie-player src="https://lottie.host/edc35cf0-5868-4b0c-9ff3-bb06c11d8474/bmlnUgmXEB.json" background="transparent" speed="1" loop autoplay class="h-32 mx-auto"></lottie-player>
+        <h4 class="text-xl font-semibold mt-4">SKU-wise Breakdown</h4>
+        <p class="mt-2 text-sm text-gray-600">Drill down every SKU’s profit/loss and know what’s working.</p>
       </div>
     </div>
   </section>
 
-  <!-- Feature Highlights Section -->
-  <section class="bg-white py-16 px-6 max-w-6xl mx-auto">
-    <h3 class="text-3xl font-bold mb-8 text-center">🚀 Why Sellers Love Us</h3>
-    <div class="grid md:grid-cols-2 gap-10">
-      <div>
-        <ul class="space-y-4 text-gray-700">
-          <li>✅ Super easy UI even for beginners</li>
-          <li>✅ No Excel or formula knowledge needed</li>
-          <li>✅ Works great with all marketplaces</li>
-          <li>✅ 100% free to use (for now 😉)</li>
-        </ul>
-      </div>
-      <div>
-        <img src="https://dummyimage.com/500x300/edf2f7/333333&text=Tool+Preview" alt="Feature preview" class="rounded-xl shadow">
+  <!-- How It Works -->
+  <section id="how-it-works" class="bg-white py-20">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <h3 class="text-3xl font-bold mb-12">📊 How It Works</h3>
+      <div class="grid md:grid-cols-4 gap-8">
+        <div class="bg-light p-6 rounded-lg shadow hover:shadow-md transition">
+          <span class="text-4xl">📥</span>
+          <h4 class="text-lg font-semibold mt-2">Step 1: Upload</h4>
+          <p class="text-sm text-gray-600 mt-1">Drop your Meesho Payment Sheet (.xlsx)</p>
+        </div>
+        <div class="bg-light p-6 rounded-lg shadow hover:shadow-md transition">
+          <span class="text-4xl">⚙️</span>
+          <h4 class="text-lg font-semibold mt-2">Step 2: Auto-Analyze</h4>
+          <p class="text-sm text-gray-600 mt-1">Tool reads and calculates profit & return instantly</p>
+        </div>
+        <div class="bg-light p-6 rounded-lg shadow hover:shadow-md transition">
+          <span class="text-4xl">📈</span>
+          <h4 class="text-lg font-semibold mt-2">Step 3: Dashboard</h4>
+          <p class="text-sm text-gray-600 mt-1">Visual view of settlement, loss, RTO, and SKU-wise data</p>
+        </div>
+        <div class="bg-light p-6 rounded-lg shadow hover:shadow-md transition">
+          <span class="text-4xl">🚀</span>
+          <h4 class="text-lg font-semibold mt-2">Step 4: Grow Smarter</h4>
+          <p class="text-sm text-gray-600 mt-1">Use data to scale profitably with zero guesswork</p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Demo Section -->
-  <section id="demo" class="py-16 px-6 bg-gray-100">
-    <h3 class="text-3xl font-bold mb-8 text-center">🧪 Try the Tool Live</h3>
-    <div class="bg-white max-w-4xl mx-auto p-6 rounded-xl shadow">
-      <p class="mb-4 text-center">Upload your payment sheet and see magic happen:</p>
-      <input type="file" class="mb-4 w-full border rounded px-4 py-2">
-      <button class="bg-indigo-600 text-white py-2 px-6 rounded hover:bg-indigo-700 w-full">Upload & Analyze</button>
-    </div>
+  <section id="demo" class="bg-primary text-white py-20 text-center">
+    <h3 class="text-3xl font-bold mb-6">👀 Live Demo</h3>
+    <p class="max-w-2xl mx-auto mb-8">Upload your sheet, set your product cost, and see your exact business status in one click. No login required!</p>
+    <a href="/demo.html" class="bg-white text-primary px-6 py-3 rounded-full hover:bg-gray-200">Try Free Demo Now</a>
   </section>
 
-  <!-- Testimonials Section -->
-  <section id="testimonials" class="py-16 px-6 max-w-6xl mx-auto">
-    <h3 class="text-3xl font-bold mb-8 text-center">💬 Trusted by 1000+ Indian Sellers</h3>
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="bg-white p-6 rounded-xl shadow">
-        <p class="text-gray-700 italic">"Finally! A tool that actually makes my numbers simple. I don’t panic when checking profits anymore."</p>
-        <p class="mt-2 font-bold text-indigo-600">— Priya J., Meesho Seller</p>
+  <!-- Testimonials -->
+  <section id="testimonials" class="py-20 bg-white">
+    <div class="max-w-6xl mx-auto px-4">
+      <h3 class="text-3xl font-bold text-center mb-12">💬 What Sellers Are Saying</h3>
+      <div class="grid md:grid-cols-3 gap-10">
+        <div class="bg-light p-6 rounded-lg shadow">
+          <p class="italic">“I never knew I was losing money on returns. This tool opened my eyes. 10/10.”</p>
+          <h4 class="mt-4 font-semibold">– Priya K., Mumbai</h4>
+        </div>
+        <div class="bg-light p-6 rounded-lg shadow">
+          <p class="italic">“Simple, clean, fast. Finally something built for Meesho sellers, not accountants.”</p>
+          <h4 class="mt-4 font-semibold">– Aman D., Jaipur</h4>
+        </div>
+        <div class="bg-light p-6 rounded-lg shadow">
+          <p class="italic">“I showed this to my team. Now every Monday starts with this dashboard. Life saver!”</p>
+          <h4 class="mt-4 font-semibold">– Komal R., Surat</h4>
+        </div>
       </div>
-      <div class="bg-white p-6 rounded-xl shadow">
-        <p class="text-gray-700 italic">"Saved me HOURS every week. I can now spend more time scaling, less on spreadsheets."</p>
-        <p class="mt-2 font-bold text-indigo-600">— Aman P., Flipkart Seller</p>
-      </div>
-      <div class="bg-white p-6 rounded-xl shadow">
-        <p class="text-gray-700 italic">"EcomDetective is my secret weapon for profit tracking!"</p>
-        <p class="mt-2 font-bold text-indigo-600">— Rina S., Amazon Seller</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Auth Section -->
-  <section id="login" class="py-16 px-6 bg-white">
-    <h3 class="text-3xl font-bold mb-8 text-center">🔐 Seller Login & Signup</h3>
-    <div class="max-w-md mx-auto bg-gray-50 p-6 rounded-xl shadow">
-      <input type="email" placeholder="Email" class="w-full border px-4 py-2 rounded mb-4">
-      <input type="password" placeholder="Password" class="w-full border px-4 py-2 rounded mb-4">
-      <button class="bg-indigo-600 text-white w-full py-2 rounded hover:bg-indigo-700">Login</button>
-      <p class="text-center mt-4 text-sm">Don't have an account? <a href="#" class="text-indigo-600 underline">Sign up</a></p>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="bg-indigo-600 text-white py-6 px-6">
-    <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-4 text-sm">
-      <div>
-        <h4 class="font-bold mb-2">EcomDetective</h4>
-        <p>Your smart assistant for eCommerce ad spend tracking.</p>
-      </div>
-      <div>
-        <h4 class="font-bold mb-2">Quick Links</h4>
-        <ul>
-          <li><a href="#how" class="hover:underline">How it Works</a></li>
-          <li><a href="#demo" class="hover:underline">Try Demo</a></li>
-          <li><a href="#login" class="hover:underline">Login</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="font-bold mb-2">Contact</h4>
-        <p>Email: support@ecomdetective.com</p>
-      </div>
-    </div>
-    <div class="text-center mt-4">© 2025 EcomDetective. All rights reserved.</div>
+  <footer class="bg-gray-800 text-white py-8 text-center mt-10">
+    <p class="text-sm">&copy; 2025 EcomDetective.com | Made for Indian Sellers 🇮🇳</p>
   </footer>
 
   <script>
-    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+    function toggleMobileMenu() {
       const menu = document.getElementById('mobileMenu');
       menu.classList.toggle('hidden');
-    });
+    }
   </script>
 </body>
 
