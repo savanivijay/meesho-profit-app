@@ -4,98 +4,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ecom Detective – Profit Tracker</title>
+  <title>EcomDetective - Profit & Return Analyzer</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
 </head>
 
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gradient-to-br from-purple-50 to-blue-100 text-gray-800">
   <!-- Header -->
   <header class="bg-white shadow sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-      <h1 class="text-2xl font-bold text-purple-600">Ecom Detective</h1>
-      <nav class="hidden md:flex gap-6 text-sm">
-        <a href="#how-it-works" class="hover:text-purple-600">How It Works</a>
-        <a href="#testimonials" class="hover:text-purple-600">Testimonials</a>
-        <a href="#login" class="hover:text-purple-600">Login</a>
+      <h1 class="text-2xl font-bold text-purple-700">EcomDetective</h1>
+      <nav class="hidden md:flex gap-6 font-medium">
+        <a href="#home" class="hover:text-purple-700">Home</a>
+        <a href="#how" class="hover:text-purple-700">How It Works</a>
+        <a href="#testimonials" class="hover:text-purple-700">Testimonials</a>
+        <a href="#login" class="hover:text-purple-700">Login</a>
       </nav>
+      <button id="mobile-menu-btn" class="md:hidden text-purple-700">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="md:hidden hidden px-4 pb-4">
+      <a href="#home" class="block py-2">Home</a>
+      <a href="#how" class="block py-2">How It Works</a>
+      <a href="#testimonials" class="block py-2">Testimonials</a>
+      <a href="#login" class="block py-2">Login</a>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="text-center py-20 px-4 bg-gradient-to-br from-purple-100 to-white">
-    <h2 class="text-4xl font-extrabold mb-4">Profit Tracker for Meesho Sellers 🚀</h2>
-    <p class="text-lg text-gray-600 max-w-xl mx-auto">Upload your payment sheet & get a full profit + return breakdown in seconds. Know your true Munafa 💸</p>
-    <a href="#tool" class="mt-6 inline-block bg-purple-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-purple-700">Try the Tool Now</a>
+  <!-- Hero -->
+  <section id="home" class="text-center py-16 px-4">
+    <h2 class="text-4xl md:text-5xl font-bold mb-4 text-purple-700">Track Your Meesho Profits Like a Pro</h2>
+    <p class="max-w-xl mx-auto text-lg md:text-xl mb-6">Upload your payment sheet → Enter your cost → Instantly see profit, return loss, and total earnings!</p>
+    <a href="#login" class="bg-purple-700 text-white px-6 py-3 rounded-full shadow hover:bg-purple-800 transition">Get Started</a>
   </section>
 
-  <!-- How it Works Section -->
-  <section id="how-it-works" class="max-w-5xl mx-auto py-20 px-4">
-    <h3 class="text-3xl font-bold text-center mb-12">How it Works 🤖</h3>
-    <div class="grid gap-10 md:grid-cols-3 text-center">
-      <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-        <h4 class="font-semibold text-lg mb-2">1. Upload Sheet</h4>
-        <p class="text-sm text-gray-600">Drag & drop your Meesho Payment Excel file.</p>
+  <!-- How It Works -->
+  <section id="how" class="bg-white py-16 px-4">
+    <div class="max-w-5xl mx-auto text-center">
+      <h3 class="text-3xl font-bold mb-8">How It Works 🚀</h3>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-purple-50 p-6 rounded-xl shadow">
+          <h4 class="font-bold text-lg mb-2">1. Upload Your Sheet 📄</h4>
+          <p>Drag and drop your Meesho payment sheet. Our tool reads it instantly.</p>
+        </div>
+        <div class="bg-purple-50 p-6 rounded-xl shadow">
+          <h4 class="font-bold text-lg mb-2">2. Enter Cost Price 💰</h4>
+          <p>Just type the cost for each SKU. You can even add ad & return cost.</p>
+        </div>
+        <div class="bg-purple-50 p-6 rounded-xl shadow">
+          <h4 class="font-bold text-lg mb-2">3. Get Instant Insights 📊</h4>
+          <p>See net profit, return loss, settlement, delivery %, and more in one view!</p>
+        </div>
       </div>
-      <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-        <h4 class="font-semibold text-lg mb-2">2. Add Costs</h4>
-        <p class="text-sm text-gray-600">Manually enter cost price, ad spend & other expenses.</p>
-      </div>
-      <div class="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
-        <h4 class="font-semibold text-lg mb-2">3. See Profits</h4>
-        <p class="text-sm text-gray-600">Dashboard shows profit per SKU, return ratio, and net revenue!</p>
+    </div>
+  </section>
+
+  <!-- New Content: Features -->
+  <section class="py-16 px-4">
+    <div class="max-w-6xl mx-auto text-center">
+      <h3 class="text-3xl font-bold mb-6">Why Sellers ❤️ EcomDetective</h3>
+      <div class="grid md:grid-cols-3 gap-6 text-left">
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+          <h4 class="text-xl font-semibold mb-2">📉 Auto ROI Calculator</h4>
+          <p>No more excel headache! We auto-calculate your ROI based on what you earn vs. what you spend.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+          <h4 class="text-xl font-semibold mb-2">📦 SKU-wise Performance</h4>
+          <p>Know exactly which product is making money and which one is burning it.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+          <h4 class="text-xl font-semibold mb-2">📅 Daily/Monthly Profit Reports</h4>
+          <p>Track profit trends by date or month. Stay in control of your business game.</p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Testimonials -->
-  <section id="testimonials" class="bg-purple-50 py-20 px-4">
-    <h3 class="text-3xl font-bold text-center mb-12">What Sellers Say ❤️</h3>
-    <div class="max-w-4xl mx-auto grid gap-8 md:grid-cols-2">
-      <div class="bg-white p-6 rounded-xl shadow">
-        <p class="italic text-gray-700">“Earlier I had no idea if I was even making profit. This tool literally opened my eyes!”</p>
-        <p class="mt-4 text-right font-semibold">– Neha, Meesho Seller</p>
-      </div>
-      <div class="bg-white p-6 rounded-xl shadow">
-        <p class="italic text-gray-700">“Simple. Fast. And it works! Love how easy it is to track returns & profit.”</p>
-        <p class="mt-4 text-right font-semibold">– Amit, Home Business Owner</p>
+  <section id="testimonials" class="bg-purple-50 py-16 px-4">
+    <div class="max-w-5xl mx-auto text-center">
+      <h3 class="text-3xl font-bold mb-8">Sellers Talk About It 💬</h3>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-xl shadow">
+          <p class="mb-2 italic">“Finally a tool made for Indian sellers. I used to waste hours on Excel. This tool saved me 10+ hours a week!”</p>
+          <h4 class="font-bold">- Radhika (Meesho Seller)</h4>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow">
+          <p class="mb-2 italic">“Tracking returns was a nightmare. EcomDetective shows me actual return loss clearly. LOVE IT!”</p>
+          <h4 class="font-bold">- Nikhil (Amazon + Meesho Seller)</h4>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- Login/Register Section -->
-  <section id="login" class="max-w-lg mx-auto py-20 px-4">
-    <div class="bg-white p-8 rounded-xl shadow-xl">
-      <h3 class="text-2xl font-bold text-center mb-6">Login / Register</h3>
-      <form class="space-y-4">
-        <input type="email" placeholder="Email" class="w-full p-3 rounded border border-gray-300" />
-        <input type="password" placeholder="Password" class="w-full p-3 rounded border border-gray-300" />
-        <button class="w-full bg-purple-600 text-white py-3 rounded hover:bg-purple-700">Login / Sign Up</button>
-      </form>
+  <section id="login" class="py-20 px-4 bg-white">
+    <div class="max-w-md mx-auto bg-purple-50 p-8 rounded-xl shadow text-center">
+      <h3 class="text-2xl font-bold mb-4">Login or Register</h3>
+      <input type="email" placeholder="Email" class="block w-full px-4 py-2 mb-4 rounded border" />
+      <input type="password" placeholder="Password" class="block w-full px-4 py-2 mb-4 rounded border" />
+      <button class="bg-purple-700 text-white px-6 py-2 rounded hover:bg-purple-800 w-full">Login</button>
+      <p class="mt-4 text-sm text-gray-600">New here? <a href="#" class="text-purple-700 font-medium">Create an account</a></p>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="bg-white border-t py-10 px-4 mt-10">
-    <div class="max-w-6xl mx-auto grid gap-8 md:grid-cols-3 text-sm text-gray-600">
-      <div>
-        <h4 class="font-bold mb-2">Ecom Detective</h4>
-        <p>Helping Indian sellers crack the real profit code 🕵️‍♂️</p>
-      </div>
-      <div>
-        <h4 class="font-bold mb-2">Quick Links</h4>
-        <ul class="space-y-1">
-          <li><a href="#how-it-works" class="hover:text-purple-600">How It Works</a></li>
-          <li><a href="#testimonials" class="hover:text-purple-600">Testimonials</a></li>
-          <li><a href="#login" class="hover:text-purple-600">Login</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="font-bold mb-2">Contact</h4>
-        <p>Email: support@ecomdetective.com</p>
-      </div>
+  <!-- Onboarding Popup -->
+  <div id="onboardingPopup" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-8 max-w-lg text-center shadow-xl">
+      <h3 class="text-xl font-bold mb-4">Welcome to EcomDetective 👋</h3>
+      <p class="mb-4">This tool helps you calculate real profits, losses, and more. Ready to begin?</p>
+      <button onclick="document.getElementById('onboardingPopup').classList.add('hidden')" class="bg-purple-700 text-white px-6 py-2 rounded">Let’s Go</button>
     </div>
-    <div class="text-center mt-8 text-xs text-gray-400">© 2025 EcomDetective.com – All rights reserved.</div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t py-8 px-4 text-center">
+    <p class="font-bold text-purple-700">EcomDetective.com</p>
+    <p class="text-sm text-gray-500">Made with ❤️ for Indian e-commerce sellers</p>
+    <div class="mt-4 text-sm text-gray-600">
+      <a href="#" class="hover:text-purple-700">Contact</a> ·
+      <a href="#" class="hover:text-purple-700">Privacy</a> ·
+      <a href="#" class="hover:text-purple-700">Terms</a>
+    </div>
   </footer>
+
+  <script>
+    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+
+    window.onload = () => {
+      setTimeout(() => {
+        document.getElementById('onboardingPopup').classList.remove('hidden');
+      }, 1000);
+    };
+  </script>
 </body>
 
 </html>
